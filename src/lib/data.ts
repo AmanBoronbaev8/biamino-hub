@@ -10,12 +10,28 @@ export const INITIAL_DATA: AppData = {
       description: 'A centralized platform to manage and track all Biamino projects.',
       department: 'present',
       status: 'active',
+      secondaryStatus: 'in-development',
+      goal: 'Create a unified system to monitor project status and share information across teams',
       githubUrl: 'https://github.com/biamino/project-hub',
       requirements: 'React, TypeScript, Tailwind CSS',
       inventory: ['MacBook Pro', 'Design Toolkit', 'Project Management Software'],
       customFields: [
         { id: 'cf1', name: 'Priority', value: 'High' },
         { id: 'cf2', name: 'Team Size', value: '4' }
+      ],
+      importantLinks: [
+        { 
+          id: 'il1', 
+          title: 'Design Mockups', 
+          url: 'https://figma.com/file/project-hub', 
+          description: 'UI/UX designs for the project hub interface' 
+        },
+        {
+          id: 'il2',
+          title: 'API Documentation',
+          url: 'https://docs.projecthub.com/api',
+          description: 'REST API specifications'
+        }
       ],
       comments: [
         {
@@ -37,12 +53,22 @@ export const INITIAL_DATA: AppData = {
       description: 'Official Biamino company website showcasing our services and portfolio.',
       department: 'present',
       status: 'income',
+      secondaryStatus: 'review',
+      goal: 'Create a compelling online presence to attract new clients and showcase our work',
       githubUrl: 'https://github.com/biamino/website',
       requirements: 'Next.js, GSAP, Contentful CMS',
       inventory: ['Design Assets', 'Content Plan', 'SEO Strategy'],
       customFields: [
         { id: 'cf1', name: 'Launch Date', value: 'June 30, 2023' },
         { id: 'cf2', name: 'Budget', value: '$12,000' }
+      ],
+      importantLinks: [
+        {
+          id: 'il1',
+          title: 'Content Calendar',
+          url: 'https://notion.so/biamino/content-calendar',
+          description: 'Blog post schedule and content plan'
+        }
       ],
       comments: [],
       createdAt: '2023-03-10T09:15:00Z',
@@ -55,10 +81,20 @@ export const INITIAL_DATA: AppData = {
       description: 'Cross-platform mobile application for Biamino customers.',
       department: 'future',
       status: 'on-hold',
+      secondaryStatus: 'planning',
+      goal: 'Develop a mobile app that allows customers to track their projects on the go',
       requirements: 'React Native, Firebase, Redux',
       inventory: ['UI/UX Designs', 'API Documentation'],
       customFields: [
         { id: 'cf1', name: 'Planned Start', value: 'Q3 2023' }
+      ],
+      importantLinks: [
+        {
+          id: 'il1',
+          title: 'Market Research',
+          url: 'https://drive.google.com/file/market-research',
+          description: 'Competitor analysis and user interviews'
+        }
       ],
       comments: [
         {
@@ -79,9 +115,12 @@ export const INITIAL_DATA: AppData = {
       description: 'Internal tool for visualizing company performance metrics.',
       department: 'future',
       status: 'no-income',
+      secondaryStatus: 'planning',
+      goal: 'Build an analytics platform to make data-driven decisions',
       requirements: 'Vue.js, D3.js, Node.js',
       inventory: ['Data Schema', 'Wireframes'],
       customFields: [],
+      importantLinks: [],
       comments: [],
       createdAt: '2023-05-05T10:00:00Z',
       updatedAt: '2023-05-05T10:00:00Z'
@@ -93,11 +132,21 @@ export const INITIAL_DATA: AppData = {
       description: 'Integration with legacy customer relationship management systems.',
       department: 'present',
       status: 'completed',
+      secondaryStatus: 'maintenance',
+      goal: 'Connect our new systems with the client's existing CRM solution',
       githubUrl: 'https://github.com/biamino/crm-integration',
       requirements: 'PHP, MySQL, REST API',
       inventory: ['API Keys', 'Documentation', 'Test Environment'],
       customFields: [
         { id: 'cf1', name: 'Client', value: 'XYZ Corp' }
+      ],
+      importantLinks: [
+        {
+          id: 'il1',
+          title: 'Client System Documentation',
+          url: 'https://client-docs.xyz-corp.com',
+          description: 'Technical specifications of the client's CRM'
+        }
       ],
       comments: [
         {
@@ -118,10 +167,26 @@ export const INITIAL_DATA: AppData = {
       description: 'AI-powered research assistant for market analysis.',
       department: 'future',
       status: 'active',
+      secondaryStatus: 'in-development',
+      goal: 'Leverage AI to automate market research and competitive analysis',
       requirements: 'Python, TensorFlow, OpenAI API',
       inventory: ['Research Papers', 'Dataset Access'],
       customFields: [
         { id: 'cf1', name: 'Research Lead', value: 'Dr. Smith' }
+      ],
+      importantLinks: [
+        {
+          id: 'il1',
+          title: 'AI Model Architecture',
+          url: 'https://miro.com/app/board/ai-architecture',
+          description: 'Diagram of the AI model components'
+        },
+        {
+          id: 'il2',
+          title: 'Research Bibliography',
+          url: 'https://zotero.org/groups/biamino/ai-research',
+          description: 'Collection of papers and references'
+        }
       ],
       comments: [],
       createdAt: '2023-05-08T09:00:00Z',

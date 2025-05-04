@@ -13,12 +13,28 @@ export type ProjectStatus =
   | 'no-income'
   | 'on-hold';
 
+export type SecondaryStatus =
+  | 'in-development'
+  | 'planning'
+  | 'completed'
+  | 'testing'
+  | 'review'
+  | 'maintenance'
+  | 'none';
+
 export type Department = 'present' | 'future';
 
 export type CustomField = {
   id: string;
   name: string;
   value: string;
+};
+
+export type ImportantLink = {
+  id: string;
+  title: string;
+  url: string;
+  description?: string;
 };
 
 export type Comment = {
@@ -37,10 +53,13 @@ export type Project = {
   description: string;
   department: Department;
   status: ProjectStatus;
+  secondaryStatus?: SecondaryStatus;
+  goal?: string;
   githubUrl?: string;
   requirements?: string;
   inventory?: string[];
   customFields: CustomField[];
+  importantLinks?: ImportantLink[];
   comments: Comment[];
   createdAt: string;
   updatedAt: string;

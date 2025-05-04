@@ -28,6 +28,27 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     }
   };
 
+  // Determine secondary status badge color
+  const getSecondaryStatusBadgeClass = () => {
+    switch (project.secondaryStatus) {
+      case 'in-development':
+        return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300';
+      case 'planning':
+        return 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300';
+      case 'completed':
+        return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300';
+      case 'testing':
+        return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300';
+      case 'review':
+        return 'bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-900 dark:text-fuchsia-300';
+      case 'maintenance':
+        return 'bg-rose-100 text-rose-800 dark:bg-rose-900 dark:text-rose-300';
+      case 'none':
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+    }
+  };
+
   // Format date for display
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -43,14 +64,28 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           </span>
           <h3 className="text-xl font-semibold truncate">{project.title}</h3>
         </div>
-        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeClass()}`}>
-          {project.status.replace('-', ' ')}
-        </span>
+        <div className="flex flex-col gap-1">
+          <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeClass()}`}>
+            {project.status.replace('-', ' ')}
+          </span>
+          
+          {project.secondaryStatus && project.secondaryStatus !== 'none' && (
+            <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getSecondaryStatusBadgeClass()}`}>
+              {project.secondaryStatus.replace('-', ' ')}
+            </span>
+          )}
+        </div>
       </div>
 
       <p className="text-muted-foreground mb-4 line-clamp-3 flex-grow">
         {project.description}
       </p>
+
+      {project.goal && (
+        <div className="mb-3 border-l-2 pl-2 border-primary/60">
+          <p className="text-sm line-clamp-2">🎯 {project.goal}</p>
+        </div>
+      )}
 
       <div className="flex flex-col space-y-2 mb-4">
         <div className="flex justify-between text-xs text-muted-foreground">

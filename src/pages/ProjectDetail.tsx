@@ -1,17 +1,22 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import CommentSection from '../components/CommentSection';
 import { useProjects } from '../contexts/ProjectContext';
 import { useAuth } from '../contexts/AuthContext';
-import { Project, ProjectStatus, Department, CustomField } from '../lib/types';
-import { ArrowLeft, Edit, Trash, Save, X, Plus, ExternalLink } from 'lucide-react';
+import { Project, ProjectStatus, Department, CustomField, SecondaryStatus, ImportantLink } from '../lib/types';
+import { ArrowLeft, Edit, Trash, Save, X, Plus, ExternalLink, LinkIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
+import { Badge } from '../components/ui/badge';
 
 // Available emojis for selection
 const EMOJIS = [
   '📊', '🚀', '🌐', '📱', '📈', '🔄', '🧠', '💻', '🛠️', '📝', 
-  '🔍', '🎯', '📢', '🤖', '🎨', '🔒', '📦', '⚙️', '🔔', '📡'
+  '🔍', '🎯', '📢', '🤖', '🎨', '🔒', '📦', '⚙️', '🔔', '📡',
+  '🌈', '🔥', '💎', '🏆', '🎁', '🎉', '💡', '📌', '🎮', '🎓',
+  '🌱', '🌟', '⭐', '🌍', '🚩', '📱', '🔮', '🚧', '🎭', '🎬'
 ];
 
 // Status options
@@ -22,6 +27,17 @@ const STATUS_OPTIONS: { value: ProjectStatus; label: string; }[] = [
   { value: 'income', label: 'Income' },
   { value: 'no-income', label: 'No Income' },
   { value: 'on-hold', label: 'On Hold' }
+];
+
+// Secondary status options
+const SECONDARY_STATUS_OPTIONS: { value: SecondaryStatus; label: string; }[] = [
+  { value: 'in-development', label: 'In Development' },
+  { value: 'planning', label: 'Planning Phase' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'testing', label: 'Testing' },
+  { value: 'review', label: 'Under Review' },
+  { value: 'maintenance', label: 'Maintenance' },
+  { value: 'none', label: 'Not Specified' }
 ];
 
 // Department options
@@ -52,7 +68,10 @@ const ProjectDetail = () => {
         description: '',
         department: 'present',
         status: 'active',
+        secondaryStatus: 'planning',
+        goal: '',
         customFields: [],
+        importantLinks: [],
         comments: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
@@ -65,7 +84,9 @@ const ProjectDetail = () => {
       description: '',
       department: 'present',
       status: 'active',
+      secondaryStatus: 'none',
       customFields: [],
+      importantLinks: [],
       comments: [],
       createdAt: '',
       updatedAt: ''
@@ -79,6 +100,13 @@ const ProjectDetail = () => {
   const [newCustomField, setNewCustomField] = useState<{ name: string; value: string }>({
     name: '',
     value: ''
+  });
+  
+  // State for new important link
+  const [newImportantLink, setNewImportantLink] = useState<{ title: string; url: string; description: string }>({
+    title: '',
+    url: '',
+    description: ''
   });
   
   // State for showing emoji picker
@@ -136,6 +164,39 @@ const ProjectDetail = () => {
     setProject(prev => ({
       ...prev,
       customFields: prev.customFields.filter(cf => cf.id !== id)
+    }));
+  };
+  
+  // Handle important link changes
+  const handleImportantLinkChange = (id: string, field: keyof ImportantLink, value: string) => {
+    setProject(prev => ({
+      ...prev,
+      importantLinks: prev.importantLinks?.map(link => 
+        link.id === id ? { ...link, [field]: value } : link
+      ) || []
+    }));
+  };
+  
+  // Add a new important link
+  const handleAddImportantLink = () => {
+    if (!newImportantLink.title || !newImportantLink.url) return;
+    
+    setProject(prev => ({
+      ...prev,
+      importantLinks: [
+        ...(prev.importantLinks || []),
+        { ...newImportantLink, id: uuidv4() }
+      ]
+    }));
+    
+    setNewImportantLink({ title: '', url: '', description: '' });
+  };
+  
+  // Delete an important link
+  const handleDeleteImportantLink = (id: string) => {
+    setProject(prev => ({
+      ...prev,
+      importantLinks: prev.importantLinks?.filter(link => link.id !== id) || []
     }));
   };
   
@@ -324,6 +385,22 @@ const ProjectDetail = () => {
                 <p className="whitespace-pre-wrap">{project.description}</p>
               )}
             </div>
+
+            {/* Goal */}
+            <div className="biamino-card p-6 mb-6">
+              <h2 className="text-xl font-semibold mb-3">🎯 Project Goal</h2>
+              {isEditing ? (
+                <textarea
+                  name="goal"
+                  value={project.goal || ''}
+                  onChange={handleChange}
+                  placeholder="What is the main goal of this project? (optional)"
+                  className="biamino-input resize-none h-24 w-full"
+                />
+              ) : (
+                <p className="whitespace-pre-wrap">{project.goal || 'No specific goal defined'}</p>
+              )}
+            </div>
             
             {/* Requirements */}
             <div className="biamino-card p-6 mb-6">
@@ -338,6 +415,121 @@ const ProjectDetail = () => {
                 />
               ) : (
                 <p className="whitespace-pre-wrap">{project.requirements || 'No requirements specified'}</p>
+              )}
+            </div>
+            
+            {/* Important Links */}
+            <div className="biamino-card p-6 mb-6">
+              <h2 className="text-xl font-semibold mb-3">Important Links</h2>
+              
+              {isEditing ? (
+                <div className="space-y-4">
+                  <div className="space-y-3">
+                    <input
+                      type="text"
+                      value={newImportantLink.title}
+                      onChange={e => setNewImportantLink({...newImportantLink, title: e.target.value})}
+                      placeholder="Link Title"
+                      className="biamino-input w-full"
+                    />
+                    <input
+                      type="url"
+                      value={newImportantLink.url}
+                      onChange={e => setNewImportantLink({...newImportantLink, url: e.target.value})}
+                      placeholder="URL (https://...)"
+                      className="biamino-input w-full"
+                    />
+                    <input
+                      type="text"
+                      value={newImportantLink.description}
+                      onChange={e => setNewImportantLink({...newImportantLink, description: e.target.value})}
+                      placeholder="Description (optional)"
+                      className="biamino-input w-full"
+                    />
+                    <button 
+                      onClick={handleAddImportantLink}
+                      disabled={!newImportantLink.title || !newImportantLink.url}
+                      className="biamino-btn-outline w-full"
+                    >
+                      <Plus size={16} className="mr-2" />
+                      Add Link
+                    </button>
+                  </div>
+                  
+                  <div className="space-y-3 mt-4">
+                    {project.importantLinks?.map((link) => (
+                      <div key={link.id} className="p-3 border rounded-md bg-muted">
+                        <div className="flex justify-between items-center mb-2">
+                          <div className="flex items-center gap-2">
+                            <LinkIcon size={16} />
+                            <input
+                              type="text"
+                              value={link.title}
+                              onChange={e => handleImportantLinkChange(link.id, 'title', e.target.value)}
+                              className="biamino-input"
+                              placeholder="Link Title"
+                            />
+                          </div>
+                          <button
+                            onClick={() => handleDeleteImportantLink(link.id)}
+                            className="text-muted-foreground hover:text-destructive"
+                          >
+                            <Trash size={16} />
+                          </button>
+                        </div>
+                        <input
+                          type="url"
+                          value={link.url}
+                          onChange={e => handleImportantLinkChange(link.id, 'url', e.target.value)}
+                          className="biamino-input w-full mb-2"
+                          placeholder="URL"
+                        />
+                        <input
+                          type="text"
+                          value={link.description || ''}
+                          onChange={e => handleImportantLinkChange(link.id, 'description', e.target.value)}
+                          className="biamino-input w-full"
+                          placeholder="Description (optional)"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {(!project.importantLinks || project.importantLinks.length === 0) && (
+                    <p className="text-muted-foreground text-center pt-2">No important links added yet</p>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {project.importantLinks && project.importantLinks.length > 0 ? (
+                    project.importantLinks.map((link) => (
+                      <Card key={link.id} className="overflow-hidden">
+                        <CardHeader className="p-4 pb-2">
+                          <CardTitle className="text-base flex items-center">
+                            <LinkIcon size={16} className="mr-2" />
+                            {link.title}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-2">
+                          <a 
+                            href={link.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline flex items-center mb-1"
+                          >
+                            <ExternalLink size={14} className="mr-1" />
+                            {link.url}
+                          </a>
+                          {link.description && (
+                            <p className="text-sm text-muted-foreground">{link.description}</p>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))
+                  ) : (
+                    <p className="text-muted-foreground">No important links added</p>
+                  )}
+                </div>
               )}
             </div>
             
@@ -436,6 +628,43 @@ const ProjectDetail = () => {
                     `}>
                       {project.status.replace('-', ' ')}
                     </div>
+                  )}
+                </div>
+                
+                {/* Secondary Status */}
+                <div>
+                  <div className="text-sm text-muted-foreground mb-1">Secondary Status</div>
+                  {isEditing ? (
+                    <select
+                      name="secondaryStatus"
+                      value={project.secondaryStatus || 'none'}
+                      onChange={handleChange}
+                      className="biamino-input"
+                    >
+                      {SECONDARY_STATUS_OPTIONS.map(option => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <>
+                      {project.secondaryStatus && project.secondaryStatus !== 'none' ? (
+                        <Badge className={`
+                          ${project.secondaryStatus === 'in-development' ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300' : ''}
+                          ${project.secondaryStatus === 'planning' ? 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300' : ''}
+                          ${project.secondaryStatus === 'completed' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300' : ''}
+                          ${project.secondaryStatus === 'testing' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300' : ''}
+                          ${project.secondaryStatus === 'review' ? 'bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-900 dark:text-fuchsia-300' : ''}
+                          ${project.secondaryStatus === 'maintenance' ? 'bg-rose-100 text-rose-800 dark:bg-rose-900 dark:text-rose-300' : ''}
+                          border-transparent
+                        `}>
+                          {project.secondaryStatus.replace('-', ' ')}
+                        </Badge>
+                      ) : (
+                        <span className="text-muted-foreground">Not specified</span>
+                      )}
+                    </>
                   )}
                 </div>
                 
