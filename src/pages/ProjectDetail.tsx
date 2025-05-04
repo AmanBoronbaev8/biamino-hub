@@ -5,45 +5,38 @@ import Layout from '../components/Layout';
 import CommentSection from '../components/CommentSection';
 import { useProjects } from '../contexts/ProjectContext';
 import { useAuth } from '../contexts/AuthContext';
-import { Project, ProjectStatus, Department, CustomField, SecondaryStatus, ImportantLink } from '../lib/types';
+import { Project, ProjectStatus, Department, CustomField, ImportantLink } from '../lib/types';
 import { ArrowLeft, Edit, Trash, Save, X, Plus, ExternalLink, LinkIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 
-// Available emojis for selection
+// Расширенный список эмодзи для выбора
 const EMOJIS = [
   '📊', '🚀', '🌐', '📱', '📈', '🔄', '🧠', '💻', '🛠️', '📝', 
   '🔍', '🎯', '📢', '🤖', '🎨', '🔒', '📦', '⚙️', '🔔', '📡',
   '🌈', '🔥', '💎', '🏆', '🎁', '🎉', '💡', '📌', '🎮', '🎓',
-  '🌱', '🌟', '⭐', '🌍', '🚩', '📱', '🔮', '🚧', '🎭', '🎬'
+  '🌱', '🌟', '⭐', '🌍', '🚩', '📱', '🔮', '🚧', '🎭', '🎬',
+  '🏠', '🏢', '🏗️', '📚', '💰', '💸', '💼', '🔋', '♻️', '🔬',
+  '🔭', '🧪', '🧬', '🧲', '🔑', '🔐', '🔎', '💯', '✅', '⚠️',
+  '⛔', '⏱️', '⏰', '🧩', '🧮', '🔧', '🔨', '🪓', '🔩', '⚡',
+  '🚦', '🚥', '🚫', '✨', '🌊', '🧿', '💫', '📊', '📅', '📋'
 ];
 
-// Status options
+// Варианты статуса
 const STATUS_OPTIONS: { value: ProjectStatus; label: string; }[] = [
-  { value: 'active', label: 'Active' },
-  { value: 'completed', label: 'Completed' },
-  { value: 'archived', label: 'Archived' },
-  { value: 'income', label: 'Income' },
-  { value: 'no-income', label: 'No Income' },
-  { value: 'on-hold', label: 'On Hold' }
+  { value: 'active', label: 'Активный' },
+  { value: 'completed', label: 'Завершен' },
+  { value: 'archived', label: 'Архивирован' },
+  { value: 'income', label: 'Доходный' },
+  { value: 'no-income', label: 'Не доходный' },
+  { value: 'on-hold', label: 'Приостановлен' }
 ];
 
-// Secondary status options
-const SECONDARY_STATUS_OPTIONS: { value: SecondaryStatus; label: string; }[] = [
-  { value: 'in-development', label: 'In Development' },
-  { value: 'planning', label: 'Planning Phase' },
-  { value: 'completed', label: 'Completed' },
-  { value: 'testing', label: 'Testing' },
-  { value: 'review', label: 'Under Review' },
-  { value: 'maintenance', label: 'Maintenance' },
-  { value: 'none', label: 'Not Specified' }
-];
-
-// Department options
+// Варианты отдела
 const DEPARTMENT_OPTIONS: { value: Department; label: string; }[] = [
-  { value: 'present', label: 'Present' },
-  { value: 'future', label: 'Future' }
+  { value: 'present', label: 'Настоящее' },
+  { value: 'future', label: 'Будущее' }
 ];
 
 const ProjectDetail = () => {
@@ -54,11 +47,11 @@ const ProjectDetail = () => {
   
   const isNewProject = projectId === 'new';
   
-  // Get the project if it exists
+  // Получаем проект, если он существует
   const existingProject = projectId && projectId !== 'new' ? 
     projects.find(p => p.id === projectId) : null;
   
-  // State for the project data
+  // Состояние для данных проекта
   const [project, setProject] = useState<Project>(() => {
     if (isNewProject) {
       return {
@@ -68,7 +61,7 @@ const ProjectDetail = () => {
         description: '',
         department: 'present',
         status: 'active',
-        secondaryStatus: 'planning',
+        secondaryStatus: 'В разработке',
         goal: '',
         customFields: [],
         importantLinks: [],
@@ -84,7 +77,7 @@ const ProjectDetail = () => {
       description: '',
       department: 'present',
       status: 'active',
-      secondaryStatus: 'none',
+      secondaryStatus: '',
       customFields: [],
       importantLinks: [],
       comments: [],
@@ -93,48 +86,48 @@ const ProjectDetail = () => {
     };
   });
   
-  // State for editing mode
+  // Состояние для режима редактирования
   const [isEditing, setIsEditing] = useState(isNewProject);
   
-  // State for new custom field
+  // Состояние для нового пользовательского поля
   const [newCustomField, setNewCustomField] = useState<{ name: string; value: string }>({
     name: '',
     value: ''
   });
   
-  // State for new important link
+  // Состояние для новой важной ссылки
   const [newImportantLink, setNewImportantLink] = useState<{ title: string; url: string; description: string }>({
     title: '',
     url: '',
     description: ''
   });
   
-  // State for showing emoji picker
+  // Состояние для отображения выбора эмодзи
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   
-  // State for inventory items
+  // Состояние для элементов инвентаря
   const [inventoryItem, setInventoryItem] = useState('');
   
   useEffect(() => {
-    // If project ID doesn't exist and it's not a new project, navigate back
+    // Если ID проекта не существует и это не новый проект, вернуться назад
     if (!isNewProject && !existingProject) {
       navigate('/');
     }
   }, [existingProject, isNewProject, navigate]);
   
-  // Handle form input changes
+  // Обработка изменений в форме
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setProject(prev => ({ ...prev, [name]: value }));
   };
   
-  // Handle emoji selection
+  // Обработка выбора эмодзи
   const handleSelectEmoji = (emoji: string) => {
     setProject(prev => ({ ...prev, emoji }));
     setShowEmojiPicker(false);
   };
   
-  // Handle custom field changes
+  // Обработка изменений пользовательских полей
   const handleCustomFieldChange = (id: string, field: 'name' | 'value', value: string) => {
     setProject(prev => ({
       ...prev,
@@ -144,7 +137,7 @@ const ProjectDetail = () => {
     }));
   };
   
-  // Add a new custom field
+  // Добавление нового пользовательского поля
   const handleAddCustomField = () => {
     if (!newCustomField.name || !newCustomField.value) return;
     
@@ -159,7 +152,7 @@ const ProjectDetail = () => {
     setNewCustomField({ name: '', value: '' });
   };
   
-  // Delete a custom field
+  // Удаление пользовательского поля
   const handleDeleteCustomField = (id: string) => {
     setProject(prev => ({
       ...prev,
@@ -167,7 +160,7 @@ const ProjectDetail = () => {
     }));
   };
   
-  // Handle important link changes
+  // Обработка изменений важной ссылки
   const handleImportantLinkChange = (id: string, field: keyof ImportantLink, value: string) => {
     setProject(prev => ({
       ...prev,
@@ -177,7 +170,7 @@ const ProjectDetail = () => {
     }));
   };
   
-  // Add a new important link
+  // Добавление новой важной ссылки
   const handleAddImportantLink = () => {
     if (!newImportantLink.title || !newImportantLink.url) return;
     
@@ -192,7 +185,7 @@ const ProjectDetail = () => {
     setNewImportantLink({ title: '', url: '', description: '' });
   };
   
-  // Delete an important link
+  // Удаление важной ссылки
   const handleDeleteImportantLink = (id: string) => {
     setProject(prev => ({
       ...prev,
@@ -200,7 +193,7 @@ const ProjectDetail = () => {
     }));
   };
   
-  // Add inventory item
+  // Добавление элемента инвентаря
   const handleAddInventoryItem = () => {
     if (!inventoryItem.trim()) return;
     
@@ -212,7 +205,7 @@ const ProjectDetail = () => {
     setInventoryItem('');
   };
   
-  // Remove inventory item
+  // Удаление элемента инвентаря
   const handleRemoveInventoryItem = (index: number) => {
     setProject(prev => ({
       ...prev,
@@ -220,10 +213,10 @@ const ProjectDetail = () => {
     }));
   };
   
-  // Handle save
+  // Обработка сохранения
   const handleSave = () => {
     if (!project.title) {
-      alert('Project title is required');
+      alert('Название проекта обязательно');
       return;
     }
     
@@ -237,27 +230,40 @@ const ProjectDetail = () => {
     }
   };
   
-  // Handle delete
+  // Обработка удаления
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this project?')) {
+    if (window.confirm('Вы уверены, что хотите удалить этот проект?')) {
       deleteProject(project.id);
       navigate('/');
     }
   };
   
-  // Format date for display
+  // Форматирование даты для отображения
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString();
+    return date.toLocaleDateString('ru-RU');
+  };
+
+  // Перевод статуса
+  const getStatusTranslation = (status: string): string => {
+    switch (status) {
+      case 'active': return 'Активный';
+      case 'completed': return 'Завершен';
+      case 'archived': return 'Архивирован';
+      case 'income': return 'Доходный';
+      case 'no-income': return 'Не доходный';
+      case 'on-hold': return 'Приостановлен';
+      default: return status;
+    }
   };
 
   if (!project && !isNewProject) {
     return (
       <Layout requireAuth>
         <div className="text-center py-12">
-          <h1 className="text-2xl font-bold">Project not found</h1>
+          <h1 className="text-2xl font-bold">Проект не найден</h1>
           <Link to="/" className="text-primary hover:underline mt-4 inline-block">
-            Go back to home
+            Вернуться на главную
           </Link>
         </div>
       </Layout>
@@ -267,16 +273,16 @@ const ProjectDetail = () => {
   return (
     <Layout requireAuth>
       <div className="max-w-4xl mx-auto">
-        {/* Back button */}
+        {/* Кнопка назад */}
         <Link 
           to={`/projects/${project.department}`}
           className="biamino-btn-ghost inline-flex items-center mb-6 text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft size={18} className="mr-2" />
-          Back to {project.department} projects
+          Назад к проектам ({project.department === 'present' ? 'настоящее' : 'будущее'})
         </Link>
         
-        {/* Project header */}
+        {/* Заголовок проекта */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
           <div className="flex items-center gap-3">
             {isEditing ? (
@@ -297,7 +303,7 @@ const ProjectDetail = () => {
                   name="title"
                   value={project.title}
                   onChange={handleChange}
-                  placeholder="Project Title"
+                  placeholder="Название проекта"
                   className="biamino-input text-2xl font-bold"
                   required
                 />
@@ -307,7 +313,7 @@ const ProjectDetail = () => {
             </div>
           </div>
           
-          {/* Action buttons */}
+          {/* Кнопки действий */}
           {isAdmin && !isEditing && (
             <div className="flex space-x-2">
               <button 
@@ -315,14 +321,14 @@ const ProjectDetail = () => {
                 className="biamino-btn-outline"
               >
                 <Edit size={18} className="mr-2" />
-                Edit
+                Редактировать
               </button>
               <button 
                 onClick={handleDelete}
                 className="biamino-btn bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2"
               >
                 <Trash size={18} className="mr-2" />
-                Delete
+                Удалить
               </button>
             </div>
           )}
@@ -334,23 +340,23 @@ const ProjectDetail = () => {
                 className="biamino-btn-outline"
               >
                 <X size={18} className="mr-2" />
-                Cancel
+                Отмена
               </button>
               <button 
                 onClick={handleSave}
                 className="biamino-btn-primary"
               >
                 <Save size={18} className="mr-2" />
-                Save
+                Сохранить
               </button>
             </div>
           )}
         </div>
         
-        {/* Emoji picker */}
+        {/* Выбор эмодзи */}
         {showEmojiPicker && (
           <div className="mb-6 p-4 border rounded-md bg-card">
-            <h3 className="text-sm font-medium mb-2">Select Emoji</h3>
+            <h3 className="text-sm font-medium mb-2">Выберите эмодзи</h3>
             <div className="grid grid-cols-10 gap-2">
               {EMOJIS.map(emoji => (
                 <button
@@ -367,18 +373,18 @@ const ProjectDetail = () => {
           </div>
         )}
         
-        {/* Project details */}
+        {/* Детали проекта */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2">
-            {/* Description */}
+            {/* Описание */}
             <div className="biamino-card p-6 mb-6">
-              <h2 className="text-xl font-semibold mb-3">Description</h2>
+              <h2 className="text-xl font-semibold mb-3">Описание</h2>
               {isEditing ? (
                 <textarea
                   name="description"
                   value={project.description}
                   onChange={handleChange}
-                  placeholder="Project description..."
+                  placeholder="Описание проекта..."
                   className="biamino-input resize-none h-40 w-full"
                 />
               ) : (
@@ -386,41 +392,41 @@ const ProjectDetail = () => {
               )}
             </div>
 
-            {/* Goal */}
+            {/* Цель */}
             <div className="biamino-card p-6 mb-6">
-              <h2 className="text-xl font-semibold mb-3">🎯 Project Goal</h2>
+              <h2 className="text-xl font-semibold mb-3">🎯 Цель проекта</h2>
               {isEditing ? (
                 <textarea
                   name="goal"
                   value={project.goal || ''}
                   onChange={handleChange}
-                  placeholder="What is the main goal of this project? (optional)"
+                  placeholder="Какова основная цель этого проекта? (необязательно)"
                   className="biamino-input resize-none h-24 w-full"
                 />
               ) : (
-                <p className="whitespace-pre-wrap">{project.goal || 'No specific goal defined'}</p>
+                <p className="whitespace-pre-wrap">{project.goal || 'Конкретная цель не определена'}</p>
               )}
             </div>
             
-            {/* Requirements */}
+            {/* Требования */}
             <div className="biamino-card p-6 mb-6">
-              <h2 className="text-xl font-semibold mb-3">Requirements</h2>
+              <h2 className="text-xl font-semibold mb-3">Требования</h2>
               {isEditing ? (
                 <textarea
                   name="requirements"
                   value={project.requirements || ''}
                   onChange={handleChange}
-                  placeholder="Project requirements..."
+                  placeholder="Требования проекта..."
                   className="biamino-input resize-none h-24 w-full"
                 />
               ) : (
-                <p className="whitespace-pre-wrap">{project.requirements || 'No requirements specified'}</p>
+                <p className="whitespace-pre-wrap">{project.requirements || 'Требования не указаны'}</p>
               )}
             </div>
             
-            {/* Important Links */}
+            {/* Важные ссылки */}
             <div className="biamino-card p-6 mb-6">
-              <h2 className="text-xl font-semibold mb-3">Important Links</h2>
+              <h2 className="text-xl font-semibold mb-3">Важные ссылки</h2>
               
               {isEditing ? (
                 <div className="space-y-4">
@@ -429,7 +435,7 @@ const ProjectDetail = () => {
                       type="text"
                       value={newImportantLink.title}
                       onChange={e => setNewImportantLink({...newImportantLink, title: e.target.value})}
-                      placeholder="Link Title"
+                      placeholder="Заголовок ссылки"
                       className="biamino-input w-full"
                     />
                     <input
@@ -443,7 +449,7 @@ const ProjectDetail = () => {
                       type="text"
                       value={newImportantLink.description}
                       onChange={e => setNewImportantLink({...newImportantLink, description: e.target.value})}
-                      placeholder="Description (optional)"
+                      placeholder="Описание (необязательно)"
                       className="biamino-input w-full"
                     />
                     <button 
@@ -452,7 +458,7 @@ const ProjectDetail = () => {
                       className="biamino-btn-outline w-full"
                     >
                       <Plus size={16} className="mr-2" />
-                      Add Link
+                      Добавить ссылку
                     </button>
                   </div>
                   
@@ -467,7 +473,7 @@ const ProjectDetail = () => {
                               value={link.title}
                               onChange={e => handleImportantLinkChange(link.id, 'title', e.target.value)}
                               className="biamino-input"
-                              placeholder="Link Title"
+                              placeholder="Заголовок ссылки"
                             />
                           </div>
                           <button
@@ -489,14 +495,14 @@ const ProjectDetail = () => {
                           value={link.description || ''}
                           onChange={e => handleImportantLinkChange(link.id, 'description', e.target.value)}
                           className="biamino-input w-full"
-                          placeholder="Description (optional)"
+                          placeholder="Описание (необязательно)"
                         />
                       </div>
                     ))}
                   </div>
                   
                   {(!project.importantLinks || project.importantLinks.length === 0) && (
-                    <p className="text-muted-foreground text-center pt-2">No important links added yet</p>
+                    <p className="text-muted-foreground text-center pt-2">Важные ссылки пока не добавлены</p>
                   )}
                 </div>
               ) : (
@@ -527,15 +533,15 @@ const ProjectDetail = () => {
                       </Card>
                     ))
                   ) : (
-                    <p className="text-muted-foreground">No important links added</p>
+                    <p className="text-muted-foreground">Важные ссылки не добавлены</p>
                   )}
                 </div>
               )}
             </div>
             
-            {/* Inventory */}
+            {/* Инвентарь */}
             <div className="biamino-card p-6 mb-6">
-              <h2 className="text-xl font-semibold mb-3">Inventory</h2>
+              <h2 className="text-xl font-semibold mb-3">Инвентарь</h2>
               
               {isEditing ? (
                 <div className="space-y-3">
@@ -544,14 +550,14 @@ const ProjectDetail = () => {
                       type="text"
                       value={inventoryItem}
                       onChange={e => setInventoryItem(e.target.value)}
-                      placeholder="Add inventory item..."
+                      placeholder="Добавить элемент инвентаря..."
                       className="biamino-input flex-grow"
                     />
                     <button 
                       onClick={handleAddInventoryItem}
                       className="biamino-btn-outline"
                     >
-                      Add
+                      Добавить
                     </button>
                   </div>
                   
@@ -570,7 +576,7 @@ const ProjectDetail = () => {
                   </ul>
                   
                   {(project.inventory?.length === 0 || !project.inventory) && (
-                    <p className="text-muted-foreground">No inventory items added yet</p>
+                    <p className="text-muted-foreground">Элементы инвентаря еще не добавлены</p>
                   )}
                 </div>
               ) : (
@@ -582,28 +588,28 @@ const ProjectDetail = () => {
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-muted-foreground">No inventory items</p>
+                    <p className="text-muted-foreground">Нет элементов инвентаря</p>
                   )}
                 </>
               )}
             </div>
             
-            {/* Comments */}
+            {/* Комментарии */}
             {!isNewProject && (
               <CommentSection projectId={project.id} comments={project.comments} />
             )}
           </div>
           
-          {/* Sidebar */}
+          {/* Боковая панель */}
           <div>
-            {/* Status and metadata */}
+            {/* Статус и метаданные */}
             <div className="biamino-card p-6 mb-6">
-              <h3 className="text-lg font-semibold mb-3">Details</h3>
+              <h3 className="text-lg font-semibold mb-3">Детали</h3>
               
               <div className="space-y-4">
-                {/* Status */}
+                {/* Статус */}
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Status</div>
+                  <div className="text-sm text-muted-foreground mb-1">Статус</div>
                   {isEditing ? (
                     <select
                       name="status"
@@ -626,51 +632,39 @@ const ProjectDetail = () => {
                       ${project.status === 'no-income' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' : ''}
                       ${project.status === 'on-hold' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300' : ''}
                     `}>
-                      {project.status.replace('-', ' ')}
+                      {getStatusTranslation(project.status)}
                     </div>
                   )}
                 </div>
                 
-                {/* Secondary Status */}
+                {/* Вторичный статус - теперь можно ввести любой текст */}
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Secondary Status</div>
+                  <div className="text-sm text-muted-foreground mb-1">Вторичный статус</div>
                   {isEditing ? (
-                    <select
+                    <input
+                      type="text"
                       name="secondaryStatus"
-                      value={project.secondaryStatus || 'none'}
+                      value={project.secondaryStatus || ''}
                       onChange={handleChange}
+                      placeholder="Введите любой статус"
                       className="biamino-input"
-                    >
-                      {SECONDARY_STATUS_OPTIONS.map(option => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
+                    />
                   ) : (
                     <>
-                      {project.secondaryStatus && project.secondaryStatus !== 'none' ? (
-                        <Badge className={`
-                          ${project.secondaryStatus === 'in-development' ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300' : ''}
-                          ${project.secondaryStatus === 'planning' ? 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300' : ''}
-                          ${project.secondaryStatus === 'completed' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300' : ''}
-                          ${project.secondaryStatus === 'testing' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300' : ''}
-                          ${project.secondaryStatus === 'review' ? 'bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-900 dark:text-fuchsia-300' : ''}
-                          ${project.secondaryStatus === 'maintenance' ? 'bg-rose-100 text-rose-800 dark:bg-rose-900 dark:text-rose-300' : ''}
-                          border-transparent
-                        `}>
-                          {project.secondaryStatus.replace('-', ' ')}
+                      {project.secondaryStatus ? (
+                        <Badge className="bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300 border-transparent">
+                          {project.secondaryStatus}
                         </Badge>
                       ) : (
-                        <span className="text-muted-foreground">Not specified</span>
+                        <span className="text-muted-foreground">Не указан</span>
                       )}
                     </>
                   )}
                 </div>
                 
-                {/* Department */}
+                {/* Отдел */}
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Department</div>
+                  <div className="text-sm text-muted-foreground mb-1">Отдел</div>
                   {isEditing ? (
                     <select
                       name="department"
@@ -685,7 +679,7 @@ const ProjectDetail = () => {
                       ))}
                     </select>
                   ) : (
-                    <div className="capitalize">{project.department}</div>
+                    <div>{project.department === 'present' ? 'Настоящее' : 'Будущее'}</div>
                   )}
                 </div>
                 
@@ -714,21 +708,21 @@ const ProjectDetail = () => {
                           {project.githubUrl.replace(/^https?:\/\/(www\.)?github\.com\//, '')}
                         </a>
                       ) : (
-                        <div className="text-muted-foreground">No GitHub URL</div>
+                        <div className="text-muted-foreground">Нет GitHub URL</div>
                       )}
                     </>
                   )}
                 </div>
                 
-                {/* Dates */}
+                {/* Даты */}
                 {!isNewProject && (
                   <>
                     <div>
-                      <div className="text-sm text-muted-foreground mb-1">Created</div>
+                      <div className="text-sm text-muted-foreground mb-1">Создан</div>
                       <div>{formatDate(project.createdAt)}</div>
                     </div>
                     <div>
-                      <div className="text-sm text-muted-foreground mb-1">Last Updated</div>
+                      <div className="text-sm text-muted-foreground mb-1">Последнее обновление</div>
                       <div>{formatDate(project.updatedAt)}</div>
                     </div>
                   </>
@@ -736,10 +730,10 @@ const ProjectDetail = () => {
               </div>
             </div>
             
-            {/* Custom Fields */}
+            {/* Пользовательские поля */}
             <div className="biamino-card p-6">
               <div className="flex justify-between items-center mb-3">
-                <h3 className="text-lg font-semibold">Custom Fields</h3>
+                <h3 className="text-lg font-semibold">Пользовательские поля</h3>
                 {isEditing && (
                   <button 
                     onClick={() => document.getElementById('custom-field-name')?.focus()}
@@ -752,7 +746,7 @@ const ProjectDetail = () => {
               
               {isEditing ? (
                 <div className="space-y-4">
-                  {/* Add new custom field */}
+                  {/* Добавление нового пользовательского поля */}
                   <div className="space-y-2">
                     <div className="flex gap-2">
                       <input
@@ -760,14 +754,14 @@ const ProjectDetail = () => {
                         type="text"
                         value={newCustomField.name}
                         onChange={e => setNewCustomField(prev => ({ ...prev, name: e.target.value }))}
-                        placeholder="Field name"
+                        placeholder="Название поля"
                         className="biamino-input w-1/2"
                       />
                       <input
                         type="text"
                         value={newCustomField.value}
                         onChange={e => setNewCustomField(prev => ({ ...prev, value: e.target.value }))}
-                        placeholder="Field value"
+                        placeholder="Значение поля"
                         className="biamino-input w-1/2"
                       />
                     </div>
@@ -777,11 +771,11 @@ const ProjectDetail = () => {
                       className="biamino-btn-outline w-full text-sm"
                     >
                       <Plus size={16} className="mr-1" />
-                      Add Field
+                      Добавить поле
                     </button>
                   </div>
                   
-                  {/* Existing custom fields */}
+                  {/* Существующие пользовательские поля */}
                   {project.customFields.map(field => (
                     <div key={field.id} className="space-y-2 pb-2 border-b last:border-0">
                       <div className="flex gap-2">
@@ -789,14 +783,14 @@ const ProjectDetail = () => {
                           type="text"
                           value={field.name}
                           onChange={e => handleCustomFieldChange(field.id, 'name', e.target.value)}
-                          placeholder="Field name"
+                          placeholder="Название поля"
                           className="biamino-input w-1/2"
                         />
                         <input
                           type="text"
                           value={field.value}
                           onChange={e => handleCustomFieldChange(field.id, 'value', e.target.value)}
-                          placeholder="Field value"
+                          placeholder="Значение поля"
                           className="biamino-input w-1/2"
                         />
                       </div>
@@ -805,14 +799,14 @@ const ProjectDetail = () => {
                         className="text-sm text-destructive hover:text-destructive/90"
                       >
                         <Trash size={14} className="mr-1 inline-block" />
-                        Remove
+                        Удалить
                       </button>
                     </div>
                   ))}
                   
                   {project.customFields.length === 0 && (
                     <p className="text-muted-foreground text-sm">
-                      No custom fields. Add fields to store additional information.
+                      Нет пользовательских полей. Добавьте поля для хранения дополнительной информации.
                     </p>
                   )}
                 </div>
@@ -828,7 +822,7 @@ const ProjectDetail = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-muted-foreground">No custom fields</p>
+                    <p className="text-muted-foreground">Нет пользовательских полей</p>
                   )}
                 </>
               )}

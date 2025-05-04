@@ -13,14 +13,8 @@ export type ProjectStatus =
   | 'no-income'
   | 'on-hold';
 
-export type SecondaryStatus =
-  | 'in-development'
-  | 'planning'
-  | 'completed'
-  | 'testing'
-  | 'review'
-  | 'maintenance'
-  | 'none';
+// Changed to string to allow custom text
+export type SecondaryStatus = string;
 
 export type Department = 'present' | 'future';
 

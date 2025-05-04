@@ -5,40 +5,40 @@ export const INITIAL_DATA: AppData = {
   projects: [
     {
       id: '1',
-      title: 'Project Hub',
+      title: 'Проектный Хаб',
       emoji: '📊',
-      description: 'A centralized platform to manage and track all Biamino projects.',
+      description: 'Централизованная платформа для управления и отслеживания всех проектов Biamino.',
       department: 'present',
       status: 'active',
-      secondaryStatus: 'in-development',
-      goal: 'Create a unified system to monitor project status and share information across teams',
+      secondaryStatus: 'В разработке',
+      goal: 'Создать единую систему для мониторинга статуса проекта и обмена информацией между командами',
       githubUrl: 'https://github.com/biamino/project-hub',
       requirements: 'React, TypeScript, Tailwind CSS',
-      inventory: ['MacBook Pro', 'Design Toolkit', 'Project Management Software'],
+      inventory: ['MacBook Pro', 'Набор дизайнера', 'ПО для управления проектами'],
       customFields: [
-        { id: 'cf1', name: 'Priority', value: 'High' },
-        { id: 'cf2', name: 'Team Size', value: '4' }
+        { id: 'cf1', name: 'Приоритет', value: 'Высокий' },
+        { id: 'cf2', name: 'Размер команды', value: '4' }
       ],
       importantLinks: [
         { 
           id: 'il1', 
-          title: 'Design Mockups', 
+          title: 'Макеты дизайна', 
           url: 'https://figma.com/file/project-hub', 
-          description: 'UI/UX designs for the project hub interface' 
+          description: 'UI/UX дизайны для интерфейса проектного хаба' 
         },
         {
           id: 'il2',
-          title: 'API Documentation',
+          title: 'API Документация',
           url: 'https://docs.projecthub.com/api',
-          description: 'REST API specifications'
+          description: 'Спецификации REST API'
         }
       ],
       comments: [
         {
           id: 'c1',
-          text: 'Design phase completed. Moving to development.',
+          text: 'Фаза проектирования завершена. Переходим к разработке.',
           userId: 'admin',
-          username: 'Administrator',
+          username: 'Администратор',
           createdAt: '2023-05-01T10:30:00Z',
           reactions: { '👍': 2, '🎉': 1 }
         }
@@ -48,26 +48,26 @@ export const INITIAL_DATA: AppData = {
     },
     {
       id: '2',
-      title: 'Marketing Website',
+      title: 'Маркетинговый сайт',
       emoji: '🌐',
-      description: 'Official Biamino company website showcasing our services and portfolio.',
+      description: 'Официальный сайт компании Biamino, демонстрирующий наши услуги и портфолио.',
       department: 'present',
       status: 'income',
-      secondaryStatus: 'review',
-      goal: 'Create a compelling online presence to attract new clients and showcase our work',
+      secondaryStatus: 'На рассмотрении',
+      goal: 'Создать привлекательное онлайн-присутствие для привлечения новых клиентов и демонстрации нашей работы',
       githubUrl: 'https://github.com/biamino/website',
       requirements: 'Next.js, GSAP, Contentful CMS',
-      inventory: ['Design Assets', 'Content Plan', 'SEO Strategy'],
+      inventory: ['Дизайн-ассеты', 'План контента', 'SEO стратегия'],
       customFields: [
-        { id: 'cf1', name: 'Launch Date', value: 'June 30, 2023' },
-        { id: 'cf2', name: 'Budget', value: '$12,000' }
+        { id: 'cf1', name: 'Дата запуска', value: '30 июня, 2023' },
+        { id: 'cf2', name: 'Бюджет', value: '12 000 $' }
       ],
       importantLinks: [
         {
           id: 'il1',
-          title: 'Content Calendar',
+          title: 'Календарь контента',
           url: 'https://notion.so/biamino/content-calendar',
-          description: 'Blog post schedule and content plan'
+          description: 'Расписание публикаций блога и план контента'
         }
       ],
       comments: [],
@@ -76,32 +76,32 @@ export const INITIAL_DATA: AppData = {
     },
     {
       id: '3',
-      title: 'Mobile App',
+      title: 'Мобильное приложение',
       emoji: '📱',
-      description: 'Cross-platform mobile application for Biamino customers.',
+      description: 'Кросс-платформенное мобильное приложение для клиентов Biamino.',
       department: 'future',
       status: 'on-hold',
-      secondaryStatus: 'planning',
-      goal: 'Develop a mobile app that allows customers to track their projects on the go',
+      secondaryStatus: 'Планирование',
+      goal: 'Разработать мобильное приложение, позволяющее клиентам отслеживать свои проекты в пути',
       requirements: 'React Native, Firebase, Redux',
-      inventory: ['UI/UX Designs', 'API Documentation'],
+      inventory: ['UI/UX Дизайны', 'API Документация'],
       customFields: [
-        { id: 'cf1', name: 'Planned Start', value: 'Q3 2023' }
+        { id: 'cf1', name: 'Планируемый старт', value: 'Q3 2023' }
       ],
       importantLinks: [
         {
           id: 'il1',
-          title: 'Market Research',
+          title: 'Исследование рынка',
           url: 'https://drive.google.com/file/market-research',
-          description: 'Competitor analysis and user interviews'
+          description: 'Анализ конкурентов и интервью пользователей'
         }
       ],
       comments: [
         {
           id: 'c1',
-          text: 'We should consider using Expo for faster development.',
+          text: 'Мы должны рассмотреть возможность использования Expo для ускорения разработки.',
           userId: 'user1',
-          username: 'ProjectManager',
+          username: 'Менеджер проекта',
           createdAt: '2023-05-02T14:20:00Z'
         }
       ],
@@ -110,15 +110,15 @@ export const INITIAL_DATA: AppData = {
     },
     {
       id: '4',
-      title: 'Data Analytics Dashboard',
+      title: 'Панель аналитики данных',
       emoji: '📈',
-      description: 'Internal tool for visualizing company performance metrics.',
+      description: 'Внутренний инструмент для визуализации показателей эффективности компании.',
       department: 'future',
       status: 'no-income',
-      secondaryStatus: 'planning',
-      goal: 'Build an analytics platform to make data-driven decisions',
+      secondaryStatus: 'Этап планирования',
+      goal: 'Создать аналитическую платформу для принятия решений на основе данных',
       requirements: 'Vue.js, D3.js, Node.js',
-      inventory: ['Data Schema', 'Wireframes'],
+      inventory: ['Схема данных', 'Каркасы интерфейса'],
       customFields: [],
       importantLinks: [],
       comments: [],
@@ -127,33 +127,33 @@ export const INITIAL_DATA: AppData = {
     },
     {
       id: '5',
-      title: 'Legacy CRM Integration',
+      title: 'Интеграция с устаревшим CRM',
       emoji: '🔄',
-      description: 'Integration with legacy customer relationship management systems.',
+      description: 'Интеграция с устаревшими системами управления взаимоотношениями с клиентами.',
       department: 'present',
       status: 'completed',
-      secondaryStatus: 'maintenance',
-      goal: 'Connect our new systems with the client\'s existing CRM solution',
+      secondaryStatus: 'Поддержка',
+      goal: 'Подключить наши новые системы к существующему CRM-решению клиента',
       githubUrl: 'https://github.com/biamino/crm-integration',
       requirements: 'PHP, MySQL, REST API',
-      inventory: ['API Keys', 'Documentation', 'Test Environment'],
+      inventory: ['API ключи', 'Документация', 'Тестовая среда'],
       customFields: [
-        { id: 'cf1', name: 'Client', value: 'XYZ Corp' }
+        { id: 'cf1', name: 'Клиент', value: 'XYZ Corp' }
       ],
       importantLinks: [
         {
           id: 'il1',
-          title: 'Client System Documentation',
+          title: 'Документация системы клиента',
           url: 'https://client-docs.xyz-corp.com',
-          description: 'Technical specifications of the client\'s CRM'
+          description: 'Технические спецификации CRM клиента'
         }
       ],
       comments: [
         {
           id: 'c1',
-          text: 'Successfully integrated with all client systems.',
+          text: 'Успешно интегрировано со всеми системами клиента.',
           userId: 'admin',
-          username: 'Administrator',
+          username: 'Администратор',
           createdAt: '2023-04-10T16:30:00Z'
         }
       ],
@@ -162,30 +162,30 @@ export const INITIAL_DATA: AppData = {
     },
     {
       id: '6',
-      title: 'AI Research Tool',
+      title: 'Инструмент исследований на базе ИИ',
       emoji: '🧠',
-      description: 'AI-powered research assistant for market analysis.',
+      description: 'Исследовательский помощник на базе ИИ для анализа рынка.',
       department: 'future',
       status: 'active',
-      secondaryStatus: 'in-development',
-      goal: 'Leverage AI to automate market research and competitive analysis',
+      secondaryStatus: 'Активная разработка',
+      goal: 'Использовать ИИ для автоматизации маркетинговых исследований и конкурентного анализа',
       requirements: 'Python, TensorFlow, OpenAI API',
-      inventory: ['Research Papers', 'Dataset Access'],
+      inventory: ['Исследовательские работы', 'Доступ к данным'],
       customFields: [
-        { id: 'cf1', name: 'Research Lead', value: 'Dr. Smith' }
+        { id: 'cf1', name: 'Руководитель исследований', value: 'Др. Смит' }
       ],
       importantLinks: [
         {
           id: 'il1',
-          title: 'AI Model Architecture',
+          title: 'Архитектура ИИ-модели',
           url: 'https://miro.com/app/board/ai-architecture',
-          description: 'Diagram of the AI model components'
+          description: 'Диаграмма компонентов ИИ-модели'
         },
         {
           id: 'il2',
-          title: 'Research Bibliography',
+          title: 'Исследовательская библиография',
           url: 'https://zotero.org/groups/biamino/ai-research',
-          description: 'Collection of papers and references'
+          description: 'Коллекция статей и ссылок'
         }
       ],
       comments: [],
@@ -202,7 +202,7 @@ export const getInitialData = (): AppData => {
     try {
       return JSON.parse(savedData);
     } catch (error) {
-      console.error('Failed to parse stored data:', error);
+      console.error('Не удалось разобрать сохраненные данные:', error);
       return INITIAL_DATA;
     }
   }

@@ -28,31 +28,23 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     }
   };
 
-  // Determine secondary status badge color
-  const getSecondaryStatusBadgeClass = () => {
-    switch (project.secondaryStatus) {
-      case 'in-development':
-        return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300';
-      case 'planning':
-        return 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300';
-      case 'completed':
-        return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300';
-      case 'testing':
-        return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300';
-      case 'review':
-        return 'bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-900 dark:text-fuchsia-300';
-      case 'maintenance':
-        return 'bg-rose-100 text-rose-800 dark:bg-rose-900 dark:text-rose-300';
-      case 'none':
-      default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+  // Status translation mapping
+  const getStatusTranslation = (status: string): string => {
+    switch (status) {
+      case 'active': return 'Активный';
+      case 'completed': return 'Завершен';
+      case 'archived': return 'Архивирован';
+      case 'income': return 'Доходный';
+      case 'no-income': return 'Не доходный';
+      case 'on-hold': return 'Приостановлен';
+      default: return status.replace('-', ' ');
     }
   };
 
   // Format date for display
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString();
+    return date.toLocaleDateString('ru-RU');
   };
 
   return (
@@ -66,12 +58,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         </div>
         <div className="flex flex-col gap-1">
           <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeClass()}`}>
-            {project.status.replace('-', ' ')}
+            {getStatusTranslation(project.status)}
           </span>
           
-          {project.secondaryStatus && project.secondaryStatus !== 'none' && (
-            <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getSecondaryStatusBadgeClass()}`}>
-              {project.secondaryStatus.replace('-', ' ')}
+          {project.secondaryStatus && (
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300">
+              {project.secondaryStatus}
             </span>
           )}
         </div>
@@ -89,14 +81,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
       <div className="flex flex-col space-y-2 mb-4">
         <div className="flex justify-between text-xs text-muted-foreground">
-          <span>Created: {formatDate(project.createdAt)}</span>
-          <span>Updated: {formatDate(project.updatedAt)}</span>
+          <span>Создан: {formatDate(project.createdAt)}</span>
+          <span>Обновлен: {formatDate(project.updatedAt)}</span>
         </div>
         
         {project.comments.length > 0 && (
           <div className="text-sm">
             <span className="text-muted-foreground">
-              {project.comments.length} comment{project.comments.length !== 1 ? 's' : ''}
+              {project.comments.length} {project.comments.length === 1 ? 'комментарий' : project.comments.length > 1 && project.comments.length < 5 ? 'комментария' : 'комментариев'}
             </span>
           </div>
         )}
@@ -106,7 +98,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         to={`/project/${project.id}`} 
         className="biamino-btn-primary mt-auto w-full flex justify-center"
       >
-        View Details
+        Подробнее
       </Link>
     </div>
   );
