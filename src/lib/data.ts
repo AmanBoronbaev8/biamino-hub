@@ -133,7 +133,7 @@ export const INITIAL_DATA: AppData = {
       department: 'present',
       status: 'completed',
       secondaryStatus: 'maintenance',
-      goal: 'Connect our new systems with the client's existing CRM solution',
+      goal: 'Connect our new systems with the client\'s existing CRM solution',
       githubUrl: 'https://github.com/biamino/crm-integration',
       requirements: 'PHP, MySQL, REST API',
       inventory: ['API Keys', 'Documentation', 'Test Environment'],
@@ -145,7 +145,7 @@ export const INITIAL_DATA: AppData = {
           id: 'il1',
           title: 'Client System Documentation',
           url: 'https://client-docs.xyz-corp.com',
-          description: 'Technical specifications of the client's CRM'
+          description: 'Technical specifications of the client\'s CRM'
         }
       ],
       comments: [
