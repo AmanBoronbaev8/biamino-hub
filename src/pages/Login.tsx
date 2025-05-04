@@ -15,14 +15,14 @@ const Login = () => {
     setError('');
 
     if (!username || !password) {
-      setError('Please enter both username and password');
+      setError('Пожалуйста, введите логин и пароль');
       return;
     }
 
     const success = login(username, password);
     
     if (!success) {
-      setError('Invalid credentials');
+      setError('Неверные учетные данные');
     }
   };
 
@@ -34,9 +34,9 @@ const Login = () => {
     <Layout>
       <div className="max-w-md mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold">Login to Biamino</h1>
+          <h1 className="text-3xl font-bold">Вход в Biamino</h1>
           <p className="text-muted-foreground mt-2">
-            Enter your credentials to access the Project Hub
+            Введите ваши учетные данные для доступа к Центру Проектов
           </p>
         </div>
 
@@ -50,7 +50,7 @@ const Login = () => {
             
             <div>
               <label htmlFor="username" className="block text-sm font-medium mb-1">
-                Username
+                Логин
               </label>
               <input
                 id="username"
@@ -58,13 +58,13 @@ const Login = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="biamino-input"
-                placeholder="Enter your username"
+                placeholder="Введите ваш логин"
               />
             </div>
             
             <div>
               <label htmlFor="password" className="block text-sm font-medium mb-1">
-                Password
+                Пароль
               </label>
               <input
                 id="password"
@@ -72,20 +72,14 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="biamino-input"
-                placeholder="Enter your password"
+                placeholder="Введите ваш пароль"
               />
             </div>
             
             <button type="submit" className="biamino-btn-primary w-full">
-              Login
+              Войти
             </button>
           </form>
-        </div>
-
-        <div className="mt-6 text-center text-sm text-muted-foreground">
-          <p className="mb-1"><strong>Demo credentials:</strong></p>
-          <p>User: username <strong>user</strong>, password <strong>user123</strong></p>
-          <p>Admin: username <strong>admin</strong>, password <strong>admin123</strong></p>
         </div>
       </div>
     </Layout>
