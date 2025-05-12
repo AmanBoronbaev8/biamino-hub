@@ -40,6 +40,18 @@ const Projects = () => {
     });
   }, [projects, validDepartment, searchTerm, statusFilter]);
 
+  const getStatusLabel = (status: ProjectStatus): string => {
+    switch (status) {
+      case 'active': return 'Активные';
+      case 'completed': return 'Завершенные';
+      case 'archived': return 'В архиве';
+      case 'income': return 'Доход';
+      case 'no-income': return 'Без дохода';
+      case 'on-hold': return 'На паузе';
+      default: return 'Все';
+    }
+  };
+
   return (
     <Layout requireAuth>
       <div className="mb-8">
@@ -49,12 +61,12 @@ const Projects = () => {
               <span className="mr-2" role="img" aria-label={validDepartment}>
                 {departmentEmoji}
               </span>
-              {validDepartment === 'present' ? 'Present' : 'Future'} Projects
+              {validDepartment === 'present' ? 'Текущие' : 'Будущие'} проекты
             </h1>
             <p className="text-muted-foreground mt-1">
               {validDepartment === 'present' 
-                ? 'Current active projects and initiatives' 
-                : 'Upcoming and planned future projects'}
+                ? 'Активные текущие проекты и инициативы' 
+                : 'Предстоящие и планируемые проекты'}
             </p>
           </div>
 
@@ -63,7 +75,7 @@ const Projects = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
               <input 
                 type="text" 
-                placeholder="Search projects..." 
+                placeholder="Поиск проектов..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="biamino-input pl-10"
@@ -75,13 +87,13 @@ const Projects = () => {
               className="biamino-btn-outline flex items-center"
             >
               <Filter size={18} className="mr-2" />
-              Filters
+              Фильтры
             </button>
             
             {isAdmin && (
               <Link to="/project/new" className="biamino-btn-primary">
                 <PlusCircle size={18} className="mr-2" />
-                New Project
+                Новый проект
               </Link>
             )}
           </div>
@@ -89,7 +101,7 @@ const Projects = () => {
 
         {showFilters && (
           <div className="mb-6 p-4 border rounded-md bg-card">
-            <h3 className="text-sm font-medium mb-2">Filter by Status</h3>
+            <h3 className="text-sm font-medium mb-2">Фильтр по статусу</h3>
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setStatusFilter('all')}
@@ -99,7 +111,7 @@ const Projects = () => {
                     : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                 }`}
               >
-                All
+                Все
               </button>
               <button
                 onClick={() => setStatusFilter('active')}
@@ -109,7 +121,7 @@ const Projects = () => {
                     : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50'
                 }`}
               >
-                Active
+                Активные
               </button>
               <button
                 onClick={() => setStatusFilter('completed')}
@@ -119,7 +131,7 @@ const Projects = () => {
                     : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50'
                 }`}
               >
-                Completed
+                Завершенные
               </button>
               <button
                 onClick={() => setStatusFilter('income')}
@@ -129,7 +141,7 @@ const Projects = () => {
                     : 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-900/50'
                 }`}
               >
-                Income
+                Доход
               </button>
               <button
                 onClick={() => setStatusFilter('no-income')}
@@ -139,7 +151,7 @@ const Projects = () => {
                     : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-900/50'
                 }`}
               >
-                No Income
+                Без дохода
               </button>
               <button
                 onClick={() => setStatusFilter('on-hold')}
@@ -149,7 +161,7 @@ const Projects = () => {
                     : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400 hover:bg-orange-200 dark:hover:bg-orange-900/50'
                 }`}
               >
-                On Hold
+                На паузе
               </button>
               <button
                 onClick={() => setStatusFilter('archived')}
@@ -159,7 +171,7 @@ const Projects = () => {
                     : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
-                Archived
+                В архиве
               </button>
             </div>
           </div>
@@ -174,11 +186,11 @@ const Projects = () => {
         ) : (
           <div className="py-10 text-center">
             <p className="text-muted-foreground text-lg">
-              No projects found.
-              {searchTerm && ' Try adjusting your search criteria.'}
-              {statusFilter !== 'all' && ' Try a different status filter.'}
+              Проектов не найдено.
+              {searchTerm && ' Попробуйте изменить критерии поиска.'}
+              {statusFilter !== 'all' && ' Попробуйте другой фильтр статуса.'}
               {!searchTerm && statusFilter === 'all' && isAdmin && (
-                <span> Why not <Link to="/project/new" className="text-primary hover:underline">create one</Link>?</span>
+                <span> Почему бы не <Link to="/project/new" className="text-primary hover:underline">создать новый</Link>?</span>
               )}
             </p>
           </div>
