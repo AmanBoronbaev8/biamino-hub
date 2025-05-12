@@ -73,6 +73,7 @@ export type AuthContextType = {
 
 export type ProjectContextType = {
   projects: Project[];
+  loading: boolean;
   addProject: (project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => void;
   updateProject: (id: string, project: Partial<Project>) => void;
   deleteProject: (id: string) => void;
@@ -82,6 +83,7 @@ export type ProjectContextType = {
   addReaction: (projectId: string, commentId: string, emoji: string) => void;
   exportData: () => void;
   importData: (jsonData: string) => boolean;
+  refreshData: () => void;
 };
 
 export type ThemeContextType = {

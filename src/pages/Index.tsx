@@ -1,14 +1,21 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
 import { useProjects } from '../contexts/ProjectContext';
-import { Download, Upload } from 'lucide-react';
+import { Download, Upload, RefreshCw } from 'lucide-react';
 
 const Index = () => {
-  const { isAuthenticated } = useAuth();
-  const { exportData, importData } = useProjects();
+  const { isAuthenticated, isAdmin } = useAuth();
+  const { exportData, importData, refreshData } = useProjects();
+  const [refreshing, setRefreshing] = useState(false);
+  
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await refreshData();
+    setTimeout(() => setRefreshing(false), 500);
+  };
   
   const handleImport = () => {
     const input = document.createElement('input');
@@ -69,19 +76,32 @@ const Index = () => {
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button 
-                onClick={exportData} 
+                onClick={handleRefresh} 
                 className="biamino-btn-outline flex items-center gap-2"
+                disabled={refreshing}
               >
-                <Download size={18} />
-                Экспортировать данные
+                <RefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
+                Обновить данные
               </button>
-              <button 
-                onClick={handleImport} 
-                className="biamino-btn-outline flex items-center gap-2"
-              >
-                <Upload size={18} />
-                Импортировать данные
-              </button>
+              
+              {isAdmin && (
+                <>
+                  <button 
+                    onClick={exportData} 
+                    className="biamino-btn-outline flex items-center gap-2"
+                  >
+                    <Download size={18} />
+                    Экспортировать данные
+                  </button>
+                  <button 
+                    onClick={handleImport} 
+                    className="biamino-btn-outline flex items-center gap-2"
+                  >
+                    <Upload size={18} />
+                    Импортировать данные
+                  </button>
+                </>
+              )}
             </div>
           </>
         ) : (

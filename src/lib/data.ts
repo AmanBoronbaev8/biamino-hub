@@ -195,7 +195,12 @@ export const INITIAL_DATA: AppData = {
   ]
 };
 
-// Function to get initial data from localStorage or use defaults
+// For server use - storage of data
+let DB_DATA: AppData = INITIAL_DATA;
+
+// --- CLIENT SIDE FUNCTIONS ---
+
+// Function to get initial data from localStorage or use defaults (kept for backwards compatibility)
 export const getInitialData = (): AppData => {
   const savedData = localStorage.getItem('biamino-data');
   if (savedData) {
@@ -209,7 +214,137 @@ export const getInitialData = (): AppData => {
   return INITIAL_DATA;
 };
 
-// Function to save data to localStorage
+// Function to save data to localStorage (kept for backwards compatibility)
 export const saveData = (data: AppData): void => {
   localStorage.setItem('biamino-data', JSON.stringify(data));
 };
+
+// --- SERVER SIDE API HANDLERS ---
+// These functions would be implemented on the server side in a real application
+
+// Get all projects
+export async function getAllProjects(): Promise<AppData> {
+  return DB_DATA;
+}
+
+// Create a new project
+export async function createProject(project: Project): Promise<Project> {
+  DB_DATA = {
+    ...DB_DATA,
+    projects: [...DB_DATA.projects, project]
+  };
+  return project;
+}
+
+// Get a project by ID
+export async function getProjectById(id: string): Promise<Project | undefined> {
+  return DB_DATA.projects.find(p => p.id === id);
+}
+
+// Update a project
+export async function updateProject(id: string, updates: Partial<Project>): Promise<Project | undefined> {
+  const projectIndex = DB_DATA.projects.findIndex(p => p.id === id);
+  
+  if (projectIndex === -1) {
+    return undefined;
+  }
+  
+  const updatedProject = {
+    ...DB_DATA.projects[projectIndex],
+    ...updates,
+    updatedAt: new Date().toISOString()
+  };
+  
+  DB_DATA.projects[projectIndex] = updatedProject;
+  return updatedProject;
+}
+
+// Delete a project
+export async function deleteProject(id: string): Promise<boolean> {
+  const initialLength = DB_DATA.projects.length;
+  DB_DATA.projects = DB_DATA.projects.filter(p => p.id !== id);
+  return DB_DATA.projects.length !== initialLength;
+}
+
+// Add a comment to a project
+export async function addComment(projectId: string, comment: any): Promise<boolean> {
+  const projectIndex = DB_DATA.projects.findIndex(p => p.id === projectId);
+  
+  if (projectIndex === -1) {
+    return false;
+  }
+  
+  DB_DATA.projects[projectIndex].comments.push(comment);
+  DB_DATA.projects[projectIndex].updatedAt = new Date().toISOString();
+  return true;
+}
+
+// Delete a comment from a project
+export async function deleteComment(projectId: string, commentId: string): Promise<boolean> {
+  const projectIndex = DB_DATA.projects.findIndex(p => p.id === projectId);
+  
+  if (projectIndex === -1) {
+    return false;
+  }
+  
+  const initialLength = DB_DATA.projects[projectIndex].comments.length;
+  DB_DATA.projects[projectIndex].comments = DB_DATA.projects[projectIndex].comments.filter(c => c.id !== commentId);
+  DB_DATA.projects[projectIndex].updatedAt = new Date().toISOString();
+  
+  return DB_DATA.projects[projectIndex].comments.length !== initialLength;
+}
+
+// Update a comment
+export async function updateComment(projectId: string, commentId: string, text: string): Promise<boolean> {
+  const projectIndex = DB_DATA.projects.findIndex(p => p.id === projectId);
+  
+  if (projectIndex === -1) {
+    return false;
+  }
+  
+  const commentIndex = DB_DATA.projects[projectIndex].comments.findIndex(c => c.id === commentId);
+  
+  if (commentIndex === -1) {
+    return false;
+  }
+  
+  DB_DATA.projects[projectIndex].comments[commentIndex].text = text;
+  DB_DATA.projects[projectIndex].updatedAt = new Date().toISOString();
+  
+  return true;
+}
+
+// Add a reaction to a comment
+export async function addReaction(projectId: string, commentId: string, emoji: string): Promise<boolean> {
+  const projectIndex = DB_DATA.projects.findIndex(p => p.id === projectId);
+  
+  if (projectIndex === -1) {
+    return false;
+  }
+  
+  const commentIndex = DB_DATA.projects[projectIndex].comments.findIndex(c => c.id === commentId);
+  
+  if (commentIndex === -1) {
+    return false;
+  }
+  
+  const comment = DB_DATA.projects[projectIndex].comments[commentIndex];
+  
+  if (!comment.reactions) {
+    comment.reactions = {};
+  }
+  
+  comment.reactions[emoji] = (comment.reactions[emoji] || 0) + 1;
+  
+  return true;
+}
+
+// Import data (replace entire database)
+export async function importAllData(data: AppData): Promise<boolean> {
+  try {
+    DB_DATA = data;
+    return true;
+  } catch (error) {
+    return false;
+  }
+}

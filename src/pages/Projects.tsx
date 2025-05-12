@@ -6,21 +6,29 @@ import ProjectCard from '../components/ProjectCard';
 import { useProjects } from '../contexts/ProjectContext';
 import { useAuth } from '../contexts/AuthContext';
 import { Department, ProjectStatus } from '../lib/types';
-import { Search, PlusCircle, Filter } from 'lucide-react';
+import { Search, PlusCircle, Filter, RefreshCw } from 'lucide-react';
 
 const Projects = () => {
   const { department } = useParams<{ department: Department }>();
-  const { projects } = useProjects();
+  const { projects, loading, refreshData } = useProjects();
   const { isAdmin } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<ProjectStatus | 'all'>('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Validate department
   const validDepartment = department === 'present' || department === 'future' ? department : 'present';
   
   // Get department emoji
   const departmentEmoji = validDepartment === 'present' ? '🚀' : '🔮';
+  
+  // Refresh data function
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await refreshData();
+    setTimeout(() => setRefreshing(false), 500);
+  };
   
   // Filter projects based on department, search term, and status
   const filteredProjects = useMemo(() => {
@@ -88,6 +96,15 @@ const Projects = () => {
             >
               <Filter size={18} className="mr-2" />
               Фильтры
+            </button>
+            
+            <button
+              onClick={handleRefresh}
+              className="biamino-btn-outline flex items-center"
+              disabled={refreshing}
+            >
+              <RefreshCw size={18} className={`mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              Обновить
             </button>
             
             {isAdmin && (
@@ -177,7 +194,12 @@ const Projects = () => {
           </div>
         )}
 
-        {filteredProjects.length > 0 ? (
+        {loading ? (
+          <div className="py-10 text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <p className="text-muted-foreground mt-4">Загрузка проектов...</p>
+          </div>
+        ) : filteredProjects.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredProjects.map(project => (
               <ProjectCard key={project.id} project={project} />
