@@ -4,17 +4,17 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ui/ThemeToggle';
-import { Menu, X, LogOut, Download, Upload } from 'lucide-react';
+import { Menu, X, LogOut, Download, Upload, RefreshCw } from 'lucide-react';
 import { useProjects } from '../contexts/ProjectContext';
 
 const Navbar: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const { theme } = useTheme();
-  const { exportData } = useProjects();
+  const { exportData, importData, refreshData } = useProjects();
   const [isOpen, setIsOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
-  const { importData } = useProjects();
+  const [refreshing, setRefreshing] = useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -46,6 +46,12 @@ const Navbar: React.FC = () => {
       }
     };
     reader.readAsText(importFile);
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await refreshData();
+    setTimeout(() => setRefreshing(false), 500);
   };
 
   return (
@@ -82,6 +88,16 @@ const Navbar: React.FC = () => {
 
             {/* Right side menu */}
             <div className="hidden md:flex items-center space-x-4">
+              {/* Refresh Button */}
+              <button 
+                onClick={handleRefresh}
+                title="Refresh Data" 
+                className="p-2 rounded-md hover:bg-muted transition-colors text-foreground"
+                disabled={refreshing}
+              >
+                <RefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
+              </button>
+              
               <ThemeToggle />
               
               {isAuthenticated ? (
@@ -163,6 +179,14 @@ const Navbar: React.FC = () => {
                   </Link>
                   <div className="pt-2 flex items-center justify-between">
                     <div className="flex items-center space-x-2">
+                      <button 
+                        onClick={handleRefresh}
+                        title="Refresh Data" 
+                        className="p-2 rounded-md hover:bg-muted transition-colors text-foreground"
+                        disabled={refreshing}
+                      >
+                        <RefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
+                      </button>
                       <ThemeToggle />
                       <span className="text-sm">
                         {user?.username} {user?.role === 'admin' && '(Admin)'}

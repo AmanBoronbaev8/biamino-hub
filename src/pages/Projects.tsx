@@ -6,29 +6,21 @@ import ProjectCard from '../components/ProjectCard';
 import { useProjects } from '../contexts/ProjectContext';
 import { useAuth } from '../contexts/AuthContext';
 import { Department, ProjectStatus } from '../lib/types';
-import { Search, PlusCircle, Filter, RefreshCw } from 'lucide-react';
+import { Search, PlusCircle, Filter } from 'lucide-react';
 
 const Projects = () => {
   const { department } = useParams<{ department: Department }>();
-  const { projects, loading, refreshData } = useProjects();
+  const { projects, loading } = useProjects();
   const { isAdmin } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<ProjectStatus | 'all'>('all');
   const [showFilters, setShowFilters] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-
+  
   // Validate department
   const validDepartment = department === 'present' || department === 'future' ? department : 'present';
   
   // Get department emoji
   const departmentEmoji = validDepartment === 'present' ? '🚀' : '🔮';
-  
-  // Refresh data function
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await refreshData();
-    setTimeout(() => setRefreshing(false), 500);
-  };
   
   // Filter projects based on department, search term, and status
   const filteredProjects = useMemo(() => {
@@ -96,15 +88,6 @@ const Projects = () => {
             >
               <Filter size={18} className="mr-2" />
               Фильтры
-            </button>
-            
-            <button
-              onClick={handleRefresh}
-              className="biamino-btn-outline flex items-center"
-              disabled={refreshing}
-            >
-              <RefreshCw size={18} className={`mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-              Обновить
             </button>
             
             {isAdmin && (
