@@ -16,7 +16,7 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 // Initialize database connection
 const dbPromise = open({
-  filename: './database.sqlite',
+  filename: process.env.DATABASE_PATH || './database.sqlite',
   driver: sqlite3.Database
 });
 

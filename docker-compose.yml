@@ -1,6 +1,4 @@
 
-version: '3.8'
-
 services:
   biamino-app:
     build:
@@ -12,6 +10,7 @@ services:
       - biamino-data:/data
     environment:
       - PORT=3001
+      - DATABASE_PATH=/data/database.sqlite
 
 volumes:
   biamino-data:

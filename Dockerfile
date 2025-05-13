@@ -24,7 +24,7 @@ RUN apk --no-cache add sqlite
 
 # Copy built files from the build stage
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/server.js .
+COPY --from=build /app/server.js ./server.js
 COPY --from=build /app/src/lib/data.ts ./src/lib/data.ts
 COPY --from=build /app/package*.json ./
 
@@ -33,8 +33,8 @@ RUN npm ci --only=production
 
 # Create directory for SQLite DB and make it writable
 RUN mkdir -p /data
+ENV DATABASE_PATH=/data/database.sqlite
 VOLUME /data
-WORKDIR /app
 
 # Expose the port the server is running on
 EXPOSE 3001
