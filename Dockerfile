@@ -28,8 +28,9 @@ COPY --from=build /app/server.cjs ./server.cjs
 COPY --from=build /app/src/lib/data.ts ./src/lib/data.ts
 COPY --from=build /app/package*.json ./
 
-# Install only production dependencies
-RUN npm ci --only=production
+# Install production dependencies, including sqlite3
+RUN npm ci --only=production && \
+    npm install sqlite3@latest
 
 # Create directory for SQLite DB and make it writable
 RUN mkdir -p /data
