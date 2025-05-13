@@ -24,7 +24,7 @@ RUN apk --no-cache add sqlite
 
 # Copy built files from the build stage
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/server.js ./server.js
+COPY --from=build /app/server.cjs ./server.cjs
 COPY --from=build /app/src/lib/data.ts ./src/lib/data.ts
 COPY --from=build /app/package*.json ./
 
@@ -39,5 +39,5 @@ VOLUME /data
 # Expose the port the server is running on
 EXPOSE 3001
 
-# Command to run the server
-CMD ["node", "server.js"]
+# Command to run the server with proper file extension
+CMD ["node", "server.cjs"]

@@ -1,4 +1,3 @@
-
 import { AppData, Project } from './types';
 
 export const INITIAL_DATA: AppData = {
@@ -200,23 +199,16 @@ let DB_DATA: AppData = INITIAL_DATA;
 
 // --- CLIENT SIDE FUNCTIONS ---
 
-// Function to get initial data from localStorage or use defaults (kept for backwards compatibility)
+// Function to get initial data - modified to not use localStorage anymore
 export const getInitialData = (): AppData => {
-  const savedData = localStorage.getItem('biamino-data');
-  if (savedData) {
-    try {
-      return JSON.parse(savedData);
-    } catch (error) {
-      console.error('Не удалось разобрать сохраненные данные:', error);
-      return INITIAL_DATA;
-    }
-  }
-  return INITIAL_DATA;
+  // Always return empty projects, real data will come from server API
+  return { projects: [] };
 };
 
-// Function to save data to localStorage (kept for backwards compatibility)
+// Function to save data - modified to not use localStorage anymore
 export const saveData = (data: AppData): void => {
-  localStorage.setItem('biamino-data', JSON.stringify(data));
+  // Do nothing, all data is saved server-side now
+  console.log('Data saving is now handled by the server API');
 };
 
 // --- SERVER SIDE API HANDLERS ---

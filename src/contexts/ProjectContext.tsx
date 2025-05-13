@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ProjectContextType, Project, AppData } from '../lib/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -16,6 +15,15 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Fetch data from server on initial load
   useEffect(() => {
     fetchData();
+  }, []);
+
+  // Also refresh data when user changes - ensure everyone sees the same data
+  useEffect(() => {
+    const refreshInterval = setInterval(() => {
+      fetchData();
+    }, 60000); // Refresh every minute
+    
+    return () => clearInterval(refreshInterval);
   }, []);
 
   const fetchData = async () => {
@@ -326,7 +334,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
     toast.success('Данные успешно экспортированы');
   };
 
-  // Import data from JSON
+  // Import data from JSON - modified to only work with the server API
   const importData = (jsonData: string): boolean => {
     try {
       const parsedData = JSON.parse(jsonData) as AppData;
@@ -350,6 +358,8 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
           if (response.ok) {
             setData(parsedData);
             toast.success('Данные успешно импортированы на сервер');
+            // Force refresh for all users
+            fetchData();
           } else {
             throw new Error('Не удалось импортировать данные на сервер');
           }
