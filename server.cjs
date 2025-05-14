@@ -37,8 +37,117 @@ async function initializeDb() {
   
   if (count.count === 0) {
     console.log('Initializing database with default projects');
-    // Import initial data
-    const initialData = require('./src/lib/data.ts').INITIAL_DATA;
+    
+    // Define initial data directly instead of importing from TypeScript
+    const initialData = {
+      projects: [
+        {
+          id: '1',
+          title: 'Проектный Хаб',
+          emoji: '📊',
+          description: 'Централизованная платформа для управления и отслеживания всех проектов Biamino.',
+          department: 'present',
+          status: 'active',
+          secondaryStatus: 'В разработке',
+          goal: 'Создать единую систему для мониторинга статуса проекта и обмена информацией между командами',
+          githubUrl: 'https://github.com/biamino/project-hub',
+          requirements: 'React, TypeScript, Tailwind CSS',
+          inventory: ['MacBook Pro', 'Набор дизайнера', 'ПО для управления проектами'],
+          customFields: [
+            { id: 'cf1', name: 'Приоритет', value: 'Высокий' },
+            { id: 'cf2', name: 'Размер команды', value: '4' }
+          ],
+          importantLinks: [
+            { 
+              id: 'il1', 
+              title: 'Макеты дизайна', 
+              url: 'https://figma.com/file/project-hub', 
+              description: 'UI/UX дизайны для интерфейса проектного хаба' 
+            },
+            {
+              id: 'il2',
+              title: 'API Документация',
+              url: 'https://docs.projecthub.com/api',
+              description: 'Спецификации REST API'
+            }
+          ],
+          comments: [
+            {
+              id: 'c1',
+              text: 'Фаза проектирования завершена. Переходим к разработке.',
+              userId: 'admin',
+              username: 'Администратор',
+              createdAt: '2023-05-01T10:30:00Z',
+              reactions: { '👍': 2, '🎉': 1 }
+            }
+          ],
+          createdAt: '2023-04-15T08:00:00Z',
+          updatedAt: '2023-05-01T10:30:00Z'
+        },
+        {
+          id: '2',
+          title: 'Маркетинговый сайт',
+          emoji: '🌐',
+          description: 'Официальный сайт компании Biamino, демонстрирующий наши услуги и портфолио.',
+          department: 'present',
+          status: 'income',
+          secondaryStatus: 'На рассмотрении',
+          goal: 'Создать привлекательное онлайн-присутствие для привлечения новых клиентов и демонстрации нашей работы',
+          githubUrl: 'https://github.com/biamino/website',
+          requirements: 'Next.js, GSAP, Contentful CMS',
+          inventory: ['Дизайн-ассеты', 'План контента', 'SEO стратегия'],
+          customFields: [
+            { id: 'cf1', name: 'Дата запуска', value: '30 июня, 2023' },
+            { id: 'cf2', name: 'Бюджет', value: '12 000 $' }
+          ],
+          importantLinks: [
+            {
+              id: 'il1',
+              title: 'Календарь контента',
+              url: 'https://notion.so/biamino/content-calendar',
+              description: 'Расписание публикаций блога и план контента'
+            }
+          ],
+          comments: [],
+          createdAt: '2023-03-10T09:15:00Z',
+          updatedAt: '2023-03-10T09:15:00Z'
+        },
+        {
+          id: '3',
+          title: 'Мобильное приложение',
+          emoji: '📱',
+          description: 'Кросс-платформенное мобильное приложение для клиентов Biamino.',
+          department: 'future',
+          status: 'on-hold',
+          secondaryStatus: 'Планирование',
+          goal: 'Разработать мобильное приложение, позволяющее клиентам отслеживать свои проекты в пути',
+          requirements: 'React Native, Firebase, Redux',
+          inventory: ['UI/UX Дизайны', 'API Документация'],
+          customFields: [
+            { id: 'cf1', name: 'Планируемый старт', value: 'Q3 2023' }
+          ],
+          importantLinks: [
+            {
+              id: 'il1',
+              title: 'Исследование рынка',
+              url: 'https://drive.google.com/file/market-research',
+              description: 'Анализ конкурентов и интервью пользователей'
+            }
+          ],
+          comments: [
+            {
+              id: 'c1',
+              text: 'Мы должны рассмотреть возможность использования Expo для ускорения разработки.',
+              userId: 'user1',
+              username: 'Менеджер проекта',
+              createdAt: '2023-05-02T14:20:00Z'
+            }
+          ],
+          createdAt: '2023-04-28T11:45:00Z',
+          updatedAt: '2023-05-02T14:20:00Z'
+        }
+      ]
+    };
     
     // Insert each project as a separate row
     for (const project of initialData.projects) {

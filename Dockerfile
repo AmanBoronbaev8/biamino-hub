@@ -25,7 +25,6 @@ RUN apk --no-cache add sqlite
 # Copy built files from the build stage
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/server.cjs ./server.cjs
-COPY --from=build /app/src/lib/data.ts ./src/lib/data.ts
 COPY --from=build /app/package*.json ./
 
 # Install production dependencies, including sqlite3
