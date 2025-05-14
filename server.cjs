@@ -481,8 +481,8 @@ app.post('/api/import', async (req, res) => {
   }
 });
 
-// Handle all other routes by serving the React app
-app.get('*', (req, res) => {
+// Change app.get('*') to use a simple path pattern without the problematic URL
+app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 

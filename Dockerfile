@@ -29,7 +29,7 @@ COPY --from=build /app/package*.json ./
 
 # Install production dependencies, including sqlite3
 RUN npm ci --only=production && \
-    npm install sqlite3@latest
+    npm install sqlite3@latest express@5.0.0-beta.1
 
 # Create directory for SQLite DB and make it writable
 RUN mkdir -p /data
