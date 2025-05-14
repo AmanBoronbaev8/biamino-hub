@@ -1,3 +1,4 @@
+
 import { AppData, Project } from './types';
 
 export const INITIAL_DATA: AppData = {
@@ -192,6 +193,11 @@ export const INITIAL_DATA: AppData = {
       updatedAt: '2023-05-08T09:00:00Z'
     }
   ]
+};
+
+// For CommonJS require compatibility
+module.exports = {
+  INITIAL_DATA
 };
 
 // For server use - storage of data

@@ -38,7 +38,7 @@ async function initializeDb() {
   if (count.count === 0) {
     console.log('Initializing database with default projects');
     // Import initial data
-    const initialData = require('./src/lib/data').INITIAL_DATA;
+    const initialData = require('./src/lib/data.ts').INITIAL_DATA;
     
     // Insert each project as a separate row
     for (const project of initialData.projects) {
