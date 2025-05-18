@@ -3,47 +3,64 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, AuthContextType } from '../lib/types';
 import { authenticate, getUserFromStorage, saveUserToStorage, removeUserFromStorage } from '../lib/auth';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
-// Create the context
+// Создаем контекст
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Provider component
+// Компонент-провайдер
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user from localStorage on initial render
+  // Загрузка пользователя из localStorage при начальной загрузке
   useEffect(() => {
     const storedUser = getUserFromStorage();
     if (storedUser) {
-      setUser(storedUser);
+      // Проверяем существование пользователя в Supabase
+      supabase
+        .from('users')
+        .select('*')
+        .eq('id', storedUser.id)
+        .single()
+        .then(({ data, error }) => {
+          if (error || !data) {
+            console.error('Ошибка при проверке пользователя в БД:', error);
+            removeUserFromStorage();
+            setUser(null);
+          } else {
+            setUser(storedUser);
+          }
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
-  // Login function
-  const login = (username: string, password: string): boolean => {
-    const authenticatedUser = authenticate(username, password);
+  // Функция входа в систему
+  const login = async (username: string, password: string): Promise<boolean> => {
+    const authenticatedUser = await authenticate(username, password);
     
     if (authenticatedUser) {
       setUser(authenticatedUser);
       saveUserToStorage(authenticatedUser);
-      toast.success(`Welcome, ${authenticatedUser.username}!`);
+      toast.success(`Добро пожаловать, ${authenticatedUser.username}!`);
       return true;
     } else {
-      toast.error('Authentication failed. Please check your credentials.');
+      toast.error('Аутентификация не удалась. Пожалуйста, проверьте ваши учетные данные.');
       return false;
     }
   };
 
-  // Logout function
+  // Функция выхода из системы
   const logout = (): void => {
     setUser(null);
     removeUserFromStorage();
-    toast.success('You have been logged out');
+    toast.success('Вы вышли из системы');
   };
 
-  // Context value
+  // Значение контекста
   const value = {
     user,
     login,
@@ -53,17 +70,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return <div className="flex items-center justify-center min-h-screen">Загрузка...</div>;
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// Hook to use the auth context
+// Хук для использования контекста аутентификации
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth должен использоваться внутри AuthProvider');
   }
   return context;
 };

@@ -9,13 +9,230 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      comment_reactions: {
+        Row: {
+          comment_id: string
+          count: number
+          created_at: string | null
+          emoji: string
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          comment_id: string
+          count?: number
+          created_at?: string | null
+          emoji: string
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          comment_id?: string
+          count?: number
+          created_at?: string | null
+          emoji?: string
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_reactions_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comments: {
+        Row: {
+          created_at: string | null
+          id: string
+          project_id: string
+          text: string
+          user_id: string
+          username: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          project_id: string
+          text: string
+          user_id: string
+          username: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          project_id?: string
+          text?: string
+          user_id?: string
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      custom_fields: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          project_id: string
+          updated_at: string | null
+          value: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          project_id: string
+          updated_at?: string | null
+          value?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          project_id?: string
+          updated_at?: string | null
+          value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_fields_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      important_links: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          project_id: string
+          title: string
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          project_id: string
+          title: string
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          project_id?: string
+          title?: string
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "important_links_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          created_at: string | null
+          department: string | null
+          description: string | null
+          emoji: string | null
+          github_url: string | null
+          goal: string | null
+          id: string
+          inventory: string[] | null
+          requirements: string | null
+          secondary_status: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          department?: string | null
+          description?: string | null
+          emoji?: string | null
+          github_url?: string | null
+          goal?: string | null
+          id?: string
+          inventory?: string[] | null
+          requirements?: string | null
+          secondary_status?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          department?: string | null
+          description?: string | null
+          emoji?: string | null
+          github_url?: string | null
+          goal?: string | null
+          id?: string
+          inventory?: string[] | null
+          requirements?: string | null
+          secondary_status?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      users: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: string
+          updated_at: string | null
+          username: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: string
+          updated_at?: string | null
+          username: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: string
+          updated_at?: string | null
+          username?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

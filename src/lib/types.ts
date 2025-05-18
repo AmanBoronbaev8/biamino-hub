@@ -13,7 +13,7 @@ export type ProjectStatus =
   | 'no-income'
   | 'on-hold';
 
-// Changed to string to allow custom text
+// Изменено на строковый тип для пользовательского текста
 export type SecondaryStatus = string;
 
 export type Department = 'present' | 'future';
@@ -65,7 +65,7 @@ export type AppData = {
 
 export type AuthContextType = {
   user: User | null;
-  login: (username: string, password: string) => boolean;
+  login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
   isAdmin: boolean;
@@ -74,16 +74,16 @@ export type AuthContextType = {
 export type ProjectContextType = {
   projects: Project[];
   loading: boolean;
-  addProject: (project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => void;
-  updateProject: (id: string, project: Partial<Project>) => void;
-  deleteProject: (id: string) => void;
-  addComment: (projectId: string, text: string) => void;
-  deleteComment: (projectId: string, commentId: string) => void;
-  updateComment: (projectId: string, commentId: string, text: string) => void;
-  addReaction: (projectId: string, commentId: string, emoji: string) => void;
-  exportData: () => void;
-  importData: (jsonData: string) => boolean;
-  refreshData: () => void;
+  addProject: (project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  updateProject: (id: string, project: Partial<Project>) => Promise<void>;
+  deleteProject: (id: string) => Promise<void>;
+  addComment: (projectId: string, text: string) => Promise<void>;
+  deleteComment: (projectId: string, commentId: string) => Promise<void>;
+  updateComment: (projectId: string, commentId: string, text: string) => Promise<void>;
+  addReaction: (projectId: string, commentId: string, emoji: string) => Promise<void>;
+  exportData: () => Promise<void>;
+  importData: (jsonData: string) => Promise<boolean>;
+  refreshData: () => Promise<void>;
 };
 
 export type ThemeContextType = {
