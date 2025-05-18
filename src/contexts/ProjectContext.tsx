@@ -82,8 +82,13 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
             reactionsObject[reaction.emoji] = reaction.count;
           });
 
+          // Преобразуем комментарий в формат, соответствующий нашей модели данных
           return {
-            ...comment,
+            id: comment.id,
+            text: comment.text,
+            userId: comment.user_id,          // Преобразуем user_id в userId
+            username: comment.username,
+            createdAt: comment.created_at,    // Преобразуем created_at в createdAt
             reactions: reactionsObject
           };
         }));
