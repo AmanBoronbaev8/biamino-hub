@@ -10,7 +10,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const { login, isAuthenticated } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -19,7 +19,7 @@ const Login = () => {
       return;
     }
 
-    const success = login(username, password);
+    const success = await login(username, password);
     
     if (!success) {
       setError('Неверные учетные данные');
@@ -80,6 +80,12 @@ const Login = () => {
               Войти
             </button>
           </form>
+          
+          <div className="mt-4 text-center text-sm text-muted-foreground">
+            <p>Тестовые аккаунты:</p>
+            <p>Логин: <strong>admin</strong>, Пароль: <strong>admin123</strong></p>
+            <p>Логин: <strong>user</strong>, Пароль: <strong>user</strong></p>
+          </div>
         </div>
       </div>
     </Layout>

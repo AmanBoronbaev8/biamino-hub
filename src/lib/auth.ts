@@ -3,9 +3,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from './types';
 
-// Demo accounts for development use
+// Демо-аккаунты для разработки
 const DEMO_ACCOUNTS = [
-  { username: 'admin', password: 'admin', role: 'admin', id: '8f7b5db8-5a5e-4a1c-9dd3-bc2c3e70827a' },
+  { username: 'admin', password: 'admin123', role: 'admin', id: '8f7b5db8-5a5e-4a1c-9dd3-bc2c3e70827a' },
   { username: 'user', password: 'user', role: 'user', id: '3e7c9d6a-1b4f-4d8e-9c2a-6f5b7e8d9a0b' }
 ];
 
