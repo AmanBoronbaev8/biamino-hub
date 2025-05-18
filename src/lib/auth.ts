@@ -9,6 +9,45 @@ const DEMO_ACCOUNTS = [
   { username: 'user', password: 'user', role: 'user', id: '3e7c9d6a-1b4f-4d8e-9c2a-6f5b7e8d9a0b' }
 ];
 
+// Функция для обеспечения наличия всех демо-аккаунтов в базе данных
+const ensureDemoAccountsExist = async (): Promise<void> => {
+  console.log('Checking and creating demo accounts if needed...');
+  
+  for (const account of DEMO_ACCOUNTS) {
+    // Проверяем существует ли пользователь в базе
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', account.username)
+      .maybeSingle();
+    
+    if (!existingUser) {
+      console.log(`Creating demo account: ${account.username}`);
+      // Если пользователя нет в базе, создаем его
+      const { data: newUser, error } = await supabase
+        .from('users')
+        .insert({
+          id: account.id,
+          username: account.username,
+          role: account.role
+        })
+        .select()
+        .single();
+      
+      if (error) {
+        console.error(`Ошибка при создании демо-аккаунта ${account.username}:`, error);
+      } else {
+        console.log(`Демо-аккаунт ${account.username} создан успешно`);
+      }
+    } else {
+      console.log(`Demo account ${account.username} already exists`);
+    }
+  }
+};
+
+// Вызываем функцию при загрузке модуля
+ensureDemoAccountsExist().catch(e => console.error('Ошибка при инициализации демо-аккаунтов:', e));
+
 export const authenticate = async (username: string, password: string): Promise<User | null> => {
   // В реальном проекте здесь должна быть аутентификация через Supabase Auth
   // Для демо используем прямую проверку
@@ -17,11 +56,16 @@ export const authenticate = async (username: string, password: string): Promise<
   if (account) {
     try {
       // Проверяем существует ли пользователь в базе
-      const { data: existingUser } = await supabase
+      const { data: existingUser, error: fetchError } = await supabase
         .from('users')
         .select('*')
         .eq('username', account.username)
-        .single();
+        .maybeSingle();
+      
+      if (fetchError) {
+        console.error("Ошибка при поиске пользователя:", fetchError);
+        return null;
+      }
       
       if (existingUser) {
         // Если пользователь существует, возвращаем его данные

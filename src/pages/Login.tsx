@@ -80,12 +80,6 @@ const Login = () => {
               Войти
             </button>
           </form>
-          
-          <div className="mt-4 text-center text-sm text-muted-foreground">
-            <p>Тестовые аккаунты:</p>
-            <p>Логин: <strong>admin</strong>, Пароль: <strong>admin123</strong></p>
-            <p>Логин: <strong>user</strong>, Пароль: <strong>user</strong></p>
-          </div>
         </div>
       </div>
     </Layout>
