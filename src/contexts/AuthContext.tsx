@@ -3,7 +3,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, AuthContextType } from '../lib/types';
 import { authenticate, getUserFromStorage, saveUserToStorage, removeUserFromStorage } from '../lib/auth';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 
 // Создаем контекст
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -19,17 +18,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const storedUser = getUserFromStorage();
       
       if (storedUser) {
-        // Проверяем сессию в Supabase
-        const { data } = await supabase.auth.getSession();
-        
-        if (data.session) {
-          // Сессия активна, используем сохраненные данные пользователя
-          setUser(storedUser);
-        } else {
-          // Сессия истекла, нужно повторно войти
-          removeUserFromStorage();
-          setUser(null);
-        }
+        setUser(storedUser);
       }
       
       setLoading(false);

@@ -18,71 +18,12 @@ export const authenticate = async (username: string, password: string): Promise<
   if (account) {
     console.log(`Authentication successful for user: ${username} with role: ${account.role}`);
     
-    try {
-      // Пытаемся войти в Supabase с помощью email/password
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email: account.email,
-        password: account.password
-      });
-
-      if (signInError) {
-        console.log('Sign-in failed, trying to create user');
-        
-        // Если пользователь не существует в Supabase, создаем его
-        const { error: signUpError } = await supabase.auth.signUp({
-          email: account.email,
-          password: account.password,
-          options: {
-            data: {
-              username: account.username,
-              role: account.role
-            }
-          }
-        });
-
-        if (signUpError) {
-          console.error('Error creating user:', signUpError.message);
-          return null;
-        }
-
-        // Пытаемся войти снова после создания
-        await supabase.auth.signInWithPassword({
-          email: account.email,
-          password: account.password
-        });
-      }
-
-      // Проверяем, существует ли пользователь в нашей таблице users
-      const { data: existingUser, error: userError } = await supabase
-        .from('users')
-        .select()
-        .eq('username', account.username)
-        .single();
-      
-      if (userError || !existingUser) {
-        console.log('Creating user in users table');
-        // Создаем запись в таблице users с ID из демо-аккаунта
-        const { error: insertError } = await supabase.from('users').insert({
-          id: account.id,
-          username: account.username,
-          role: account.role
-        });
-
-        if (insertError) {
-          console.error('Error inserting user data:', insertError.message);
-        }
-      }
-
-      // Возвращаем данные пользователя
-      return {
-        id: account.id,
-        username: account.username,
-        role: account.role as 'admin' | 'user'
-      };
-    } catch (err) {
-      console.error('Ошибка при работе с Supabase:', err);
-      return null;
-    }
+    // Возвращаем данные пользователя для демо-аккаунтов без Supabase
+    return {
+      id: account.id,
+      username: account.username,
+      role: account.role as 'admin' | 'user'
+    };
   }
   
   console.log(`Authentication failed for user: ${username}`);
