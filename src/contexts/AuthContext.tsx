@@ -3,7 +3,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, AuthContextType } from '../lib/types';
 import { authenticate, getUserFromStorage, saveUserToStorage, removeUserFromStorage } from '../lib/auth';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 
 // Создаем контекст
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -16,26 +15,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Загрузка пользователя из localStorage при начальной загрузке
   useEffect(() => {
     const storedUser = getUserFromStorage();
-    if (storedUser) {
-      // Проверяем существование пользователя в Supabase
-      supabase
-        .from('users')
-        .select('*')
-        .eq('id', storedUser.id)
-        .single()
-        .then(({ data, error }) => {
-          if (error || !data) {
-            console.error('Ошибка при проверке пользователя в БД:', error);
-            removeUserFromStorage();
-            setUser(null);
-          } else {
-            setUser(storedUser);
-          }
-          setLoading(false);
-        });
-    } else {
-      setLoading(false);
-    }
+    setUser(storedUser);
+    setLoading(false);
   }, []);
 
   // Функция входа в систему

@@ -19,6 +19,7 @@ const Login = () => {
       return;
     }
 
+    console.log(`Attempting to login with username: ${username}`);
     const success = await login(username, password);
     
     if (!success) {
