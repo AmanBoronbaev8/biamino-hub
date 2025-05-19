@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, AuthContextType } from '../lib/types';
 import { authenticate, getUserFromStorage, saveUserToStorage, removeUserFromStorage } from '../lib/auth';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 // Создаем контекст
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -14,9 +15,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Загрузка пользователя из localStorage при начальной загрузке
   useEffect(() => {
-    const storedUser = getUserFromStorage();
-    setUser(storedUser);
-    setLoading(false);
+    const loadUser = async () => {
+      const storedUser = getUserFromStorage();
+      
+      if (storedUser) {
+        // Проверяем сессию в Supabase
+        const { data } = await supabase.auth.getSession();
+        
+        if (data.session) {
+          // Сессия активна, используем сохраненные данные пользователя
+          setUser(storedUser);
+        } else {
+          // Сессия истекла, нужно повторно войти
+          removeUserFromStorage();
+          setUser(null);
+        }
+      }
+      
+      setLoading(false);
+    };
+    
+    loadUser();
   }, []);
 
   // Функция входа в систему
@@ -29,15 +48,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       toast.success(`Добро пожаловать, ${authenticatedUser.username}!`);
       return true;
     } else {
-      toast.error('Аутентификация не удалась. Пожалуйста, проверьте ваши учетные данные.');
+      toast.error('Неверные учетные данные. Пожалуйста, проверьте логин и пароль.');
       return false;
     }
   };
 
   // Функция выхода из системы
-  const logout = (): void => {
+  const logout = async (): Promise<void> => {
     setUser(null);
-    removeUserFromStorage();
+    await removeUserFromStorage();
     toast.success('Вы вышли из системы');
   };
 
