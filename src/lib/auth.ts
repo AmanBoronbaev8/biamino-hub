@@ -18,12 +18,76 @@ export const authenticate = async (username: string, password: string): Promise<
   if (account) {
     console.log(`Authentication successful for user: ${username} with role: ${account.role}`);
     
-    // Возвращаем данные пользователя для демо-аккаунтов без Supabase
-    return {
-      id: account.id,
-      username: account.username,
-      role: account.role as 'admin' | 'user'
-    };
+    try {
+      // Войти или создать пользователя в Supabase
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: account.email,
+        password: account.password
+      });
+
+      if (authError) {
+        console.log('Sign-in failed, trying to create user', authError.message);
+        
+        // Создаем пользователя если его нет
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email: account.email,
+          password: account.password
+        });
+
+        if (signUpError) {
+          console.error('Error creating Supabase user:', signUpError.message);
+          return null;
+        }
+        
+        // Повторная попытка входа
+        const { data: retryData, error: retryError } = await supabase.auth.signInWithPassword({
+          email: account.email,
+          password: account.password
+        });
+        
+        if (retryError) {
+          console.error('Failed to sign in after creating user:', retryError.message);
+          return null;
+        }
+      }
+      
+      // Проверяем запись в таблице users
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', account.id)
+        .single();
+        
+      if (userError || !userData) {
+        // Добавляем пользователя в таблицу users
+        const { error: insertError } = await supabase
+          .from('users')
+          .upsert({ 
+            id: account.id,
+            username: account.username,
+            role: account.role 
+          });
+          
+        if (insertError) {
+          console.error('Failed to insert user data:', insertError.message);
+        }
+      }
+
+      // Возвращаем данные пользователя
+      return {
+        id: account.id,
+        username: account.username,
+        role: account.role as 'admin' | 'user'
+      };
+    } catch (error) {
+      console.error('Error during authentication:', error);
+      // Даже если ошибка с Supabase, возвращаем данные демо-аккаунта для продолжения работы
+      return {
+        id: account.id,
+        username: account.username,
+        role: account.role as 'admin' | 'user'
+      };
+    }
   }
   
   console.log(`Authentication failed for user: ${username}`);

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ProjectContextType, Project, AppData } from '../lib/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -37,8 +36,17 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (projectsError) throw projectsError;
-      if (!projects) throw new Error('Не удалось получить проекты');
+      if (projectsError) {
+        console.error('Error fetching projects:', projectsError);
+        throw projectsError;
+      }
+      
+      if (!projects) {
+        console.error('No projects returned');
+        throw new Error('Не удалось получить проекты');
+      }
+
+      console.log('Projects fetched from Supabase:', projects.length);
 
       // Для каждого проекта получаем пользовательские поля
       const projectsWithDetails = await Promise.all(projects.map(async (project) => {
@@ -145,31 +153,46 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
 
     try {
-      // Сначала добавляем проект
+      console.log('Creating new project:', project.title);
+      
+      // Создаем уникальный ID для проекта
+      const projectId = uuidv4();
+      
+      // Подготавливаем данные проекта для Supabase
+      const projectData = {
+        id: projectId,
+        title: project.title,
+        emoji: project.emoji,
+        description: project.description,
+        department: project.department,
+        status: project.status,
+        secondary_status: project.secondaryStatus,
+        goal: project.goal,
+        github_url: project.githubUrl,
+        requirements: project.requirements,
+        inventory: project.inventory
+      };
+      
+      console.log('Project data for Supabase:', projectData);
+
+      // Добавляем проект
       const { data: newProject, error: projectError } = await supabase
         .from('projects')
-        .insert({
-          title: project.title,
-          emoji: project.emoji,
-          description: project.description,
-          department: project.department,
-          status: project.status,
-          secondary_status: project.secondaryStatus,
-          goal: project.goal,
-          github_url: project.githubUrl,
-          requirements: project.requirements,
-          inventory: project.inventory
-        })
-        .select('*')
+        .insert(projectData)
+        .select()
         .single();
 
-      if (projectError) throw projectError;
-      if (!newProject) throw new Error('Не удалось создать проект');
+      if (projectError) {
+        console.error('Error creating project:', projectError);
+        throw projectError;
+      }
+
+      console.log('Project created successfully:', newProject);
 
       // Добавляем пользовательские поля
       if (project.customFields?.length) {
         const customFieldsToInsert = project.customFields.map(field => ({
-          project_id: newProject.id,
+          project_id: projectId,
           name: field.name,
           value: field.value
         }));
@@ -184,7 +207,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
       // Добавляем важные ссылки
       if (project.importantLinks?.length) {
         const linksToInsert = project.importantLinks.map(link => ({
-          project_id: newProject.id,
+          project_id: projectId,
           title: link.title,
           url: link.url,
           description: link.description
@@ -203,7 +226,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
       toast.success(`Проект "${project.title}" успешно создан`);
     } catch (error) {
       console.error('Ошибка при создании проекта:', error);
-      toast.error('Не удалось создать проект');
+      toast.error('Не удалось создать проект. Проверьте консоль для деталей.');
     }
   };
 

@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, AuthContextType } from '../lib/types';
 import { authenticate, getUserFromStorage, saveUserToStorage, removeUserFromStorage } from '../lib/auth';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 // Создаем контекст
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,13 +16,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Загрузка пользователя из localStorage при начальной загрузке
   useEffect(() => {
     const loadUser = async () => {
-      const storedUser = getUserFromStorage();
-      
-      if (storedUser) {
-        setUser(storedUser);
+      try {
+        const storedUser = getUserFromStorage();
+        
+        if (storedUser) {
+          // Проверяем сессию в Supabase
+          const { data } = await supabase.auth.getSession();
+          
+          if (data.session) {
+            console.log('Supabase session found, using stored user:', storedUser);
+            setUser(storedUser);
+          } else {
+            console.log('No Supabase session, but stored user found. Using local data for demo.');
+            setUser(storedUser);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading user session:', error);
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
     
     loadUser();
@@ -29,24 +43,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Функция входа в систему
   const login = async (username: string, password: string): Promise<boolean> => {
-    const authenticatedUser = await authenticate(username, password);
-    
-    if (authenticatedUser) {
-      setUser(authenticatedUser);
-      saveUserToStorage(authenticatedUser);
-      toast.success(`Добро пожаловать, ${authenticatedUser.username}!`);
-      return true;
-    } else {
-      toast.error('Неверные учетные данные. Пожалуйста, проверьте логин и пароль.');
+    try {
+      const authenticatedUser = await authenticate(username, password);
+      
+      if (authenticatedUser) {
+        setUser(authenticatedUser);
+        saveUserToStorage(authenticatedUser);
+        toast.success(`Добро пожаловать, ${authenticatedUser.username}!`);
+        return true;
+      } else {
+        toast.error('Неверные учетные данные. Пожалуйста, проверьте логин и пароль.');
+        return false;
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Произошла ошибка при входе в систему.');
       return false;
     }
   };
 
   // Функция выхода из системы
   const logout = async (): Promise<void> => {
-    setUser(null);
-    await removeUserFromStorage();
-    toast.success('Вы вышли из системы');
+    try {
+      await removeUserFromStorage();
+      setUser(null);
+      toast.success('Вы вышли из системы');
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Произошла ошибка при выходе из системы.');
+    }
   };
 
   // Значение контекста
