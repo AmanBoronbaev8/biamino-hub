@@ -3,7 +3,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, AuthContextType } from '../lib/types';
 import { authenticate, getUserFromStorage, saveUserToStorage, removeUserFromStorage } from '../lib/auth';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 
 // Создаем контекст
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,16 +19,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const storedUser = getUserFromStorage();
         
         if (storedUser) {
-          // Проверяем сессию в Supabase
-          const { data } = await supabase.auth.getSession();
-          
-          if (data.session) {
-            console.log('Supabase session found, using stored user:', storedUser);
-            setUser(storedUser);
-          } else {
-            console.log('No Supabase session, but stored user found. Using local data for demo.');
-            setUser(storedUser);
-          }
+          console.log('Stored user found:', storedUser);
+          setUser(storedUser);
         }
       } catch (error) {
         console.error('Error loading user session:', error);

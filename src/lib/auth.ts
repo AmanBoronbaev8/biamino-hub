@@ -8,7 +8,7 @@ const DEMO_ACCOUNTS = [
   { username: 'user', password: 'user', role: 'user', id: '3e7c9d6a-1b4f-4d8e-9c2a-6f5b7e8d9a0b', email: 'user@example.com' }
 ];
 
-// Аутентификация с проверкой по демо-аккаунтам
+// Аутентификация с использованием локального хранилища (без Supabase Auth)
 export const authenticate = async (username: string, password: string): Promise<User | null> => {
   console.log(`Attempting to authenticate user: ${username}`);
   
@@ -19,44 +19,12 @@ export const authenticate = async (username: string, password: string): Promise<
     console.log(`Authentication successful for user: ${username} with role: ${account.role}`);
     
     try {
-      // Войти или создать пользователя в Supabase
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: account.email,
-        password: account.password
-      });
-
-      if (authError) {
-        console.log('Sign-in failed, trying to create user', authError.message);
-        
-        // Создаем пользователя если его нет
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-          email: account.email,
-          password: account.password
-        });
-
-        if (signUpError) {
-          console.error('Error creating Supabase user:', signUpError.message);
-          return null;
-        }
-        
-        // Повторная попытка входа
-        const { data: retryData, error: retryError } = await supabase.auth.signInWithPassword({
-          email: account.email,
-          password: account.password
-        });
-        
-        if (retryError) {
-          console.error('Failed to sign in after creating user:', retryError.message);
-          return null;
-        }
-      }
-      
       // Проверяем запись в таблице users
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select('*')
         .eq('id', account.id)
-        .single();
+        .maybeSingle();
         
       if (userError || !userData) {
         // Добавляем пользователя в таблицу users
@@ -70,6 +38,7 @@ export const authenticate = async (username: string, password: string): Promise<
           
         if (insertError) {
           console.error('Failed to insert user data:', insertError.message);
+          // Продолжаем работу даже при ошибке
         }
       }
 
@@ -81,7 +50,7 @@ export const authenticate = async (username: string, password: string): Promise<
       };
     } catch (error) {
       console.error('Error during authentication:', error);
-      // Даже если ошибка с Supabase, возвращаем данные демо-аккаунта для продолжения работы
+      // Возвращаем данные демо-аккаунта для продолжения работы
       return {
         id: account.id,
         username: account.username,
@@ -113,6 +82,4 @@ export const saveUserToStorage = (user: User): void => {
 
 export const removeUserFromStorage = async (): Promise<void> => {
   localStorage.removeItem('user');
-  // Также выходим из Supabase
-  await supabase.auth.signOut();
 };
